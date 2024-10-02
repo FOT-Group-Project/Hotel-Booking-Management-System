@@ -1,0 +1,36 @@
+{
+  "development": {
+    "username": "sa",
+    "password": "123456",
+    "database": "database_development",
+    "host": "DESKTOP-QG0R1VQ",
+    "port": 1433,
+    "dialect": "mssql",
+    "dialectOptions": {
+      "encrypt": true,
+      "trustServerCertificate": true
+    }
+  },
+  "test": {
+    "username": "sa",
+    "password": "123456",
+    "database": "database_test",
+    "host": "DESKTOP-QG0R1VQ",
+    "dialect": "mssql",
+    "dialectOptions": {
+      "encrypt": true,
+      "trustServerCertificate": true
+    }
+  },
+  "production": {
+    "username": "sa",
+    "password": "123456",
+    "database": "database_production",
+    "host": "DESKTOP-QG0R1VQ",
+    "dialect": "mssql",
+    "dialectOptions": {
+      "encrypt": true,
+      "trustServerCertificate": false
+    }
+  }
+}
