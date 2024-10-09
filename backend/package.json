@@ -15,6 +15,8 @@
     "sequelize-cli": "^6.6.2"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "express": "^4.21.0",
     "sequelize": "^6.37.3",
     "tedious": "^18.6.1"
