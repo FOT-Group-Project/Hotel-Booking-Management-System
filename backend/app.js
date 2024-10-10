@@ -3,6 +3,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
+const authRoutes = require("./routes/auth.route");
+
 const app = express();
 
 app.use(express.json());
@@ -15,6 +17,8 @@ app.use(
     credentials: true, // Allow cookies to be sent
   })
 );
+
+app.use("/api/auth", authRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
