@@ -17,23 +17,23 @@ export default function Header() {
 
       <div className="flex gap-2 md:order-2">
         <Link to="/sign-in">
-          <Button>Sign In</Button>
+          <Button className="bg-customBlue">Sign In</Button>
         </Link>
         <Navbar.Toggle className="" />
       </div>
 
       <Navbar.Collapse className="mr-24">
-      <Navbar.Link active={path === '/'} as={'div'}>
-          <Link to='/'>Home</Link>
+        <Navbar.Link active={path === "/"} as={"div"}>
+          <Link to="/">Home</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/booking'} as={'div'}>
-          <Link to='/booking'>Booking</Link>
+        <Navbar.Link active={path === "/booking"} as={"div"}>
+          <Link to="/booking">Booking</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/about-us'} as={'div'}>
-          <Link to='/about-us'>About Us</Link>
+        <Navbar.Link active={path === "/about-us"} as={"div"}>
+          <Link to="/about-us">About Us</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/contact-us'} as={'div'}>
-          <Link to='/contact-us'>Contact Us</Link>
+        <Navbar.Link active={path === "/contact-us"} as={"div"}>
+          <Link to="/contact-us">Contact Us</Link>
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
