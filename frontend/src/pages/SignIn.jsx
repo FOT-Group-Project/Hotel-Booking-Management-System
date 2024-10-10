@@ -53,6 +53,7 @@ export default function SignIn() {
                 onChange={handleChange}
               />
             </div>
+
             <Button className="bg-customBlue" type="submit" disabled={loading}>
               {loading ? (
                 <>
@@ -64,6 +65,12 @@ export default function SignIn() {
               )}
             </Button>
           </form>
+          <div className="flex gap-2 text-sm mt-5">
+            <span>Dont Have an account?</span>
+            <Link to="/sign-up" className="text-blue-500">
+              Sign Up
+            </Link>
+          </div>
           {errorMessage && (
             <Alert className="mt-5" color="failure">
               {errorMessage}
