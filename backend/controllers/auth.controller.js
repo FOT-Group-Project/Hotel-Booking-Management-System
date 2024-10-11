@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const { errorHandler } = require("../utils/error");
+const User = require("../models/user");
 
 dotenv.config();
 
@@ -118,7 +119,52 @@ const signIn = (req, res) => {
     });
 };
 
+const google = async (req, res, next) => {
+  const {email, name, photoURL} = req.body;
+  try {
+    const user = await User.findOne({email});
+    if(user) {
+      const token = jwt.sign(
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET_KEY, // Token expires in 1 hour
+      );
+      const { password: pass, ...rest } = user.dataValues;
+      return res
+        .status(200)
+        .cookie("access_token", token, {
+          httpOnly: true,
+          maxAge: 3600000, // Expires in 1 hour, must be in milliseconds
+        })
+        .json(rest);
+    } else {
+      const password = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      const newUser = await User.create({
+        username: name,
+        email: email,
+        password: hashedPassword,
+        profilepicurl: photoURL
+      });
+      await newUser.save();
+      const token = jwt.sign(
+        { id: newUser.id},
+        process.env.JWT_SECRET_KEY, // Token expires in 1 hour
+      );
+      const { password: pass, ...rest } = newUser._doc;
+      res 
+        .status(200)
+        .cookie("access_token", token, {
+          httpOnly: true, // Expires in 1 hour, must be in milliseconds
+        })
+        .json(rest);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   signUp: signUp,
   signIn: signIn,
+  google: google
 };
