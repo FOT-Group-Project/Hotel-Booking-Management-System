@@ -119,49 +119,49 @@ function signIn(req, res) {
 }
 
 async function google(req, res, next) {
-  const { email, name, googlePhotoUrl } = req.body;
+  const { email, name, photoURL } = req.body;
+
   try {
-    let user = await models.User.findOne({ where: { email: email } });
-    if (user) {
-      const token = jwt.sign(
-        { id: user.id, role: user.role },
-        process.env.JWT_SECRET_KEY,
-        { expiresIn: "1h" }
-      );
-      const { password: pass, ...rest } = user.dataValues;
-      res
-        .status(200)
-        .cookie("access_token", token, {
-          httpOnly: true,
-          maxAge: 3600000,
-        })
-        .json(rest);
-    } else {
-      user = await models.User.create({
-        username: name,
+    const user = await models.User.findOne({ where: { email: email } });
+
+    if (user === null) {
+      const newUser = await models.User.create({
         email: email,
-        profilepicurl: googlePhotoUrl,
+        username: name,
+        profilepicurl: photoURL,
+        role: "customer",
       });
+
       const token = jwt.sign(
-        { id: user.id, role: user.role },
+        { id: newUser.id, role: newUser.role },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "1h" }
+        { expiresIn: "1h" } // Token expires in 1 hour
       );
-      const { password: pass, ...rest } = user.dataValues;
+
       res
         .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
-          maxAge: 3600000,
+          maxAge: 3600000, // Expires in 1 hour, must be in milliseconds
         })
-        .json(rest);
+        .json(newUser);
+    } else {
+      const token = jwt.sign(
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "1h" } // Token expires in 1 hour
+      );
+
+      res
+        .status(200)
+        .cookie("access_token", token, {
+          httpOnly: true,
+          maxAge: 3600000, // Expires in 1 hour, must be in milliseconds
+        })
+        .json(user);
     }
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-      error: error,
-    });
+    next(error);
   }
 }
 
