@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const { errorHandler } = require("../utils/error");
-const User = require("../models/user");
 
 dotenv.config();
 
@@ -122,47 +121,47 @@ function signIn(req, res) {
 async function google(req, res, next) {
   const { email, name, googlePhotoUrl } = req.body;
   try {
-    const user = await models.User.findOne({ email });
+    let user = await models.User.findOne({ where: { email: email } });
     if (user) {
       const token = jwt.sign(
-        { id: user._id, isAdmin: user.isAdmin },
-        process.env.JWT_SECRET
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "1h" }
       );
-      const { password, ...rest } = user._doc;
+      const { password: pass, ...rest } = user.dataValues;
       res
         .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
+          maxAge: 3600000,
         })
         .json(rest);
     } else {
-      const generatedPassword =
-        Math.random().toString(36).slice(-8) +
-        Math.random().toString(36).slice(-8);
-      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
-      const newUser = new User({
-        username:
-          name.toLowerCase().split(" ").join("") +
-          Math.random().toString(9).slice(-4),
-        email,
-        password: hashedPassword,
-        profilePicture: googlePhotoUrl,
+      user = await models.User.create({
+        username: name,
+        email: email,
+        profilepicurl: googlePhotoUrl,
       });
-      await models.newUser.save();
       const token = jwt.sign(
-        { id: newUser._id, isAdmin: newUser.isAdmin },
-        process.env.JWT_SECRET
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "1h" }
       );
-      const { password, ...rest } = newUser._doc;
+      const { password: pass, ...rest } = user.dataValues;
       res
         .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
+          maxAge: 3600000,
         })
         .json(rest);
     }
   } catch (error) {
-    next(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error,
+    });
   }
 }
 
