@@ -32,9 +32,9 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="border-b-2">
+    <Navbar className="border-b-2 sticky top-0 z-50 justify-around">
       <Link to="/">
-        <img src={logo} alt="" className="w-48" />
+        <img src={logo} alt="" className="w-48 " />
       </Link>
 
       <div className="flex gap-2 md:order-2">
@@ -55,6 +55,11 @@ export default function Header() {
             <Link to="/dashboard?tab=profile">
               <Dropdown.Item>
                 <span className="block text-sm">Profile</span>
+              </Dropdown.Item>
+            </Link>
+            <Link to="/dashboard">
+              <Dropdown.Item>
+                <span className="block text-sm">Dashboard</span>
               </Dropdown.Item>
             </Link>
             <Dropdown.Divider />
