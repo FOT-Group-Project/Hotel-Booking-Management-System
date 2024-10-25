@@ -7,6 +7,14 @@ import {
   HiAnnotation,
   HiChartPie,
 } from "react-icons/hi";
+import { FaUsers, FaPowerOff } from "react-icons/fa";
+import { RiHotelFill } from "react-icons/ri";
+import { FaBed } from "react-icons/fa6";
+import { FaSignOutAlt } from "react-icons/fa";
+import { FaSignInAlt } from "react-icons/fa";
+import { MdBedroomParent } from "react-icons/md";
+import { BiSolidCategory } from "react-icons/bi";
+
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
@@ -44,63 +52,84 @@ export default function DashSidebar() {
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
         <Sidebar.ItemGroup className="flex flex-col gap-1">
-          {currentUser && currentUser.isAdmin && (
-            <Link to="/dashboard?tab=dash">
-              <Sidebar.Item
-                active={tab === "dash" || !tab}
-                icon={HiChartPie}
-                as="div"
-              >
-                Dashboard
-              </Sidebar.Item>
-            </Link>
-          )}
-          <Link to="/dashboard?tab=profile">
+          <Link to="/dashboard?tab=dash">
             <Sidebar.Item
-              active={tab === "profile"}
-              icon={HiUser}
-              label={currentUser.isAdmin ? "Admin" : "User"}
-              labelColor="dark"
+              active={tab === "dash" || !tab}
+              icon={HiChartPie}
               as="div"
             >
-              Profile
+              Dashboard
             </Sidebar.Item>
           </Link>
-          {currentUser.isAdmin && (
-            <Link to="/dashboard?tab=posts">
-              <Sidebar.Item
-                active={tab === "posts"}
-                icon={HiDocumentText}
-                as="div"
-              >
-                Posts
-              </Sidebar.Item>
-            </Link>
-          )}
-          {currentUser.isAdmin && (
-            <>
-              <Link to="/dashboard?tab=users">
-                <Sidebar.Item
-                  active={tab === "users"}
-                  icon={HiOutlineUserGroup}
-                  as="div"
-                >
-                  Users
-                </Sidebar.Item>
-              </Link>
-              <Link to="/dashboard?tab=comments">
-                <Sidebar.Item
-                  active={tab === "comments"}
-                  icon={HiAnnotation}
-                  as="div"
-                >
-                  Comments
-                </Sidebar.Item>
-              </Link>
-            </>
-          )}
+
+          <Link to="/dashboard?tab=booked">
+            <Sidebar.Item
+              active={tab === "booked" || !tab}
+              icon={FaBed}
+              as="div"
+            >
+              Booked
+            </Sidebar.Item>
+          </Link>
+
+          <Link to="/dashboard?tab=check-in">
+            <Sidebar.Item
+              active={tab === "check-in" || !tab}
+              icon={FaSignInAlt}
+              as="div"
+            >
+              Check In
+            </Sidebar.Item>
+          </Link>
+
+          <Link to="/dashboard?tab=check-out">
+            <Sidebar.Item
+              active={tab === "check-out" || !tab}
+              icon={FaSignOutAlt}
+              as="div"
+            >
+              Check Out
+            </Sidebar.Item>
+          </Link>
+
+          <Link to="/dashboard?tab=rooms">
+            <Sidebar.Item
+              active={tab === "rooms" || !tab}
+              icon={MdBedroomParent}
+              as="div"
+            >
+              Rooms
+            </Sidebar.Item>
+          </Link>
+
+          <Link to="/dashboard?tab=room-category">
+            <Sidebar.Item
+              active={tab === "room-ategory" || !tab}
+              icon={BiSolidCategory}
+              as="div"
+            >
+              Room Category
+            </Sidebar.Item>
+          </Link>
+
+          <Link to="/">
+            <Sidebar.Item
+              active={tab === "/" || !tab}
+              icon={RiHotelFill}
+              as="div"
+            >
+              Home
+            </Sidebar.Item>
+          </Link>
+
+          <Link to="/dashboard?tab=users">
+            <Sidebar.Item active={tab === "users"} icon={FaUsers} as="div">
+              Users
+            </Sidebar.Item>
+          </Link>
+
           <Sidebar.Item
-            icon={HiArrowSmRight}
+            icon={FaPowerOff}
             className="cursor-pointer"
             onClick={handleSignout}
           >
