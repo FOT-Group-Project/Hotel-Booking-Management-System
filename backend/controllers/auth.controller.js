@@ -121,13 +121,21 @@ function signIn(req, res) {
 async function google(req, res, next) {
   const { email, name, photoURL } = req.body;
 
+  const names = name.split(" ");
+  const firstName = names[0];
+  const lastName = names[1];
+
+  const username = `${firstName}${lastName}`.toLowerCase();
+
   try {
     const user = await models.User.findOne({ where: { email: email } });
 
     if (user === null) {
       const newUser = await models.User.create({
         email: email,
-        username: name,
+        username: username,
+        firstname: firstName,
+        lastname: lastName,
         profilepicurl: photoURL,
         role: "customer",
       });
