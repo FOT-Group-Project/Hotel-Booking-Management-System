@@ -127,46 +127,64 @@ async function google(req, res, next) {
 
   const username = `${firstName}${lastName}`.toLowerCase();
 
+  // password should be hashed before saving to the and set default password
+  const password = "1234";
+
   try {
     const user = await models.User.findOne({ where: { email: email } });
 
     if (user === null) {
-      const newUser = await models.User.create({
-        email: email,
-        username: username,
-        firstname: firstName,
-        lastname: lastName,
-        profilepicurl: photoURL,
-        role: "customer",
+      bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.hash(password, salt, function (err, hash) {
+          const user = {
+            username: username,
+            email: email,
+            password: hash,
+            firstname: firstName,
+            lastname: lastName,
+            profilepicurl: photoURL,
+            role: "customer",
+          };
+
+          models.User.create(user)
+            .then((result) => {
+              const token = jwt.sign(
+                { id: result.id, role: result.role },
+                process.env.JWT_SECRET_KEY,
+                { expiresIn: "1h" }
+              );
+
+              const { password: pass, ...rest } = result.dataValues;
+
+              res
+                .status(200)
+                .cookie("access_token", token, {
+                  httpOnly: true,
+                  maxAge: 3600000,
+                })
+                .json(rest);
+            })
+            .catch((error) => {
+              next(error);
+            });
+        });
       });
-
-      const token = jwt.sign(
-        { id: newUser.id, role: newUser.role },
-        process.env.JWT_SECRET_KEY,
-        { expiresIn: "1h" } // Token expires in 1 hour
-      );
-
-      res
-        .status(200)
-        .cookie("access_token", token, {
-          httpOnly: true,
-          maxAge: 3600000, // Expires in 1 hour, must be in milliseconds
-        })
-        .json(newUser);
     } else {
       const token = jwt.sign(
         { id: user.id, role: user.role },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "1h" } // Token expires in 1 hour
+        { expiresIn: "1h" }
       );
+
+      const { password: pass, ...rest } = user.dataValues;
 
       res
         .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
-          maxAge: 3600000, // Expires in 1 hour, must be in milliseconds
+          maxAge: 3600000,
         })
-        .json(user);
+        .json(rest);
     }
   } catch (error) {
     next(error);

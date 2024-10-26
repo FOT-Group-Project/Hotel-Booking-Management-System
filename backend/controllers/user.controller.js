@@ -1,5 +1,21 @@
 const models = require("../models");
 
+function getUsers(req, res) {
+  models.User.findAll()
+    .then((users) => {
+      res.status(200).json({
+        success: true,
+        users: users,
+      });
+    })
+    .catch((err) => {
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    });
+}
+
 function createUser(req, res) {
   const {
     username,
@@ -58,7 +74,28 @@ function deleteUser(req, res) {
     });
 }
 
+// Get all customers using view GetAllCustomers in MySQL
+function getCustomers(req, res) {
+  try {
+    models.sequelize
+      .query("SELECT * FROM GetAllCustomers")
+      .then((customers) => {
+        res.status(200).json({
+          success: true,
+          customers: customers[0],
+        });
+      });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
 module.exports = {
+  getUsers: getUsers,
   createUser: createUser,
   deleteUser: deleteUser,
+  getCustomers: getCustomers,
 };
