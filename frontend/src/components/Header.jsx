@@ -32,7 +32,11 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="border-b-2 sticky top-0 z-50 justify-around">
+    <Navbar
+      className="border-b-2 sticky top-0 z-50 justify-between"
+      fluid
+      rounded
+    >
       <Link to="/">
         <img src={logo} alt="" className="w-48 " />
       </Link>
