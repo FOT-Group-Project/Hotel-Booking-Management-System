@@ -40,7 +40,7 @@ import { Link } from "react-router-dom";
 import Profile from "../assets/add-pic.png";
 import { app } from "../firebase";
 
-export default function DashUser() {
+export default function DashCustomers() {
   const { currentUser } = useSelector((state) => state.user);
   const [users, setUsers] = useState([]);
   const [showMore, setShowMore] = useState(true);
@@ -98,10 +98,10 @@ export default function DashUser() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`/api/user/getusers`);
+      const res = await fetch(`/api/user/getcustomers`);
       const data = await res.json();
       if (res.ok) {
-        setUsers(data.users);
+        setUsers(data.customers);
       }
     } catch (error) {
       console.log(error.message);
@@ -300,11 +300,11 @@ export default function DashUser() {
                 Home
               </Breadcrumb.Item>
             </Link>
-            <Breadcrumb.Item>Users</Breadcrumb.Item>
+            <Breadcrumb.Item>Customers</Breadcrumb.Item>
           </Breadcrumb>
 
           <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
-            All Users
+            All Customers
           </h1>
 
           <div className="flex gap-3 justify-end">
@@ -763,8 +763,9 @@ export default function DashUser() {
             <>
               <Table hoverable className="shadow-md w-full">
                 <TableHead>
-                  <TableHeadCell>name</TableHeadCell>
                   <TableHeadCell>user name</TableHeadCell>
+                  <TableHeadCell>first name</TableHeadCell>
+                  <TableHeadCell>last name</TableHeadCell>
                   <TableHeadCell>position</TableHeadCell>
                   <TableHeadCell>email</TableHeadCell>
                   <TableHeadCell>phone number</TableHeadCell>
@@ -782,10 +783,10 @@ export default function DashUser() {
                           rounded
                           className="mr-3"
                         />
-
-                        {user.firstname + " " + user.lastname}
+                        {user.username}
                       </TableCell>
-                      <TableCell>{user.username}</TableCell>
+                      <TableCell>{user.firstname}</TableCell>
+                      <TableCell>{user.lastname}</TableCell>
                       <TableCell>{user.role}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.phone}</TableCell>

@@ -14,6 +14,7 @@ import { FaSignOutAlt } from "react-icons/fa";
 import { FaSignInAlt } from "react-icons/fa";
 import { MdBedroomParent } from "react-icons/md";
 import { BiSolidCategory } from "react-icons/bi";
+import { IoIosMan } from "react-icons/io";
 
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -92,6 +93,12 @@ export default function DashSidebar() {
             </Sidebar.Item>
           </Link>
 
+          <Link to="/dashboard?tab=customers">
+            <Sidebar.Item active={tab === "customers"} icon={IoIosMan} as="div">
+              Customers
+            </Sidebar.Item>
+          </Link>
+
           <Link to="/dashboard?tab=rooms">
             <Sidebar.Item
               active={tab === "rooms" || !tab}
@@ -109,16 +116,6 @@ export default function DashSidebar() {
               as="div"
             >
               Room Category
-            </Sidebar.Item>
-          </Link>
-
-          <Link to="/">
-            <Sidebar.Item
-              active={tab === "/" || !tab}
-              icon={RiHotelFill}
-              as="div"
-            >
-              Home
             </Sidebar.Item>
           </Link>
 

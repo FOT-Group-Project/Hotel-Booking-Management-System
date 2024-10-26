@@ -52,16 +52,24 @@ export default function Header() {
                 {currentUser.email}
               </span>
             </Dropdown.Header>
+            <Link to="/">
+              <Dropdown.Item>
+                <span className="block text-sm">Home</span>
+              </Dropdown.Item>
+            </Link>
+
             <Link to="/dashboard?tab=profile">
               <Dropdown.Item>
                 <span className="block text-sm">Profile</span>
               </Dropdown.Item>
             </Link>
+
             <Link to="/dashboard">
               <Dropdown.Item>
                 <span className="block text-sm">Dashboard</span>
               </Dropdown.Item>
             </Link>
+
             <Dropdown.Divider />
             <Link onClick={handleSignout}>
               <Dropdown.Item>
