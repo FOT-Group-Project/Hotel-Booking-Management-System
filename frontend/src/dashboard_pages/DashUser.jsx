@@ -767,8 +767,9 @@ export default function DashUser() {
                 <>
                   <Table hoverable className="shadow-md w-full">
                     <TableHead>
-                      <TableHeadCell>name</TableHeadCell>
                       <TableHeadCell>user name</TableHeadCell>
+                      <TableHeadCell>first name</TableHeadCell>
+                      <TableHeadCell>last name</TableHeadCell>
                       <TableHeadCell>position</TableHeadCell>
                       <TableHeadCell>email</TableHeadCell>
                       <TableHeadCell>phone number</TableHeadCell>
@@ -787,9 +788,10 @@ export default function DashUser() {
                               className="mr-3"
                             />
 
-                            {user.firstname + " " + user.lastname}
+                            {user.username}
                           </TableCell>
-                          <TableCell>{user.username}</TableCell>
+                          <TableCell>{user.firstname}</TableCell>
+                          <TableCell>{user.lastname}</TableCell>
                           <TableCell>{user.role}</TableCell>
                           <TableCell>{user.email}</TableCell>
                           <TableCell>{user.phone}</TableCell>
