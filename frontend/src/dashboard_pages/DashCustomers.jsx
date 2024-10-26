@@ -98,13 +98,16 @@ export default function DashCustomers() {
 
   const fetchUsers = async () => {
     try {
+      setCreateLoding(true);
       const res = await fetch(`/api/user/getcustomers`);
       const data = await res.json();
       if (res.ok) {
         setUsers(data.customers);
+        setCreateLoding(false);
       }
     } catch (error) {
       console.log(error.message);
+      setCreateLoding(false);
     }
   };
   console.log(users);
@@ -759,75 +762,81 @@ export default function DashCustomers() {
             </Alert>
           )}
 
-          {currentUser.role == "Admin" && currentData.length > 0 ? (
+          {createLoding ? (
+            <div className="flex justify-center items-center h-96">
+              <Spinner size="xl" />
+            </div>
+          ) : (
             <>
-              <Table hoverable className="shadow-md w-full">
-                <TableHead>
-                  <TableHeadCell>user name</TableHeadCell>
-                  <TableHeadCell>first name</TableHeadCell>
-                  <TableHeadCell>last name</TableHeadCell>
-                  <TableHeadCell>position</TableHeadCell>
-                  <TableHeadCell>email</TableHeadCell>
-                  <TableHeadCell>phone number</TableHeadCell>
-                  <TableHeadCell>
-                    <span className="sr-only">Edit</span>
-                  </TableHeadCell>
-                </TableHead>
-                {currentData.map((user) => (
-                  <Table.Body className="divide-y" key={user.id}>
-                    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                      <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white flex items-center">
-                        <Avatar
-                          alt={user.username}
-                          img={user.profilepicurl}
-                          rounded
-                          className="mr-3"
-                        />
-                        {user.username}
-                      </TableCell>
-                      <TableCell>{user.firstname}</TableCell>
-                      <TableCell>{user.lastname}</TableCell>
-                      <TableCell>{user.role}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.phone}</TableCell>
-                      <TableCell>
-                        <Button.Group>
-                          <Button
-                            onClick={() => {
-                              setOpenModalEdit(true);
-                              setFormData(user);
-                            }}
-                            color="gray"
-                          >
-                            <FaUserEdit className="mr-3 h-4 w-4" />
-                            Edit
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              setShowModal(true);
-                              setUserIdToDelete(user.id);
-                            }}
-                            color="gray"
-                          >
-                            <MdDeleteForever className="mr-3 h-4 w-4" />
-                            Delete
-                          </Button>
-                        </Button.Group>
-                      </TableCell>
-                    </TableRow>
-                  </Table.Body>
-                ))}
-              </Table>
-              {/* Pagination */}
-              <div className="flex overflow-x-auto sm:justify-center">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={onPageChange}
-                  showIcons
-                />
-              </div>
-              {/* {showMore && (
+              {currentUser.role == "admin" && currentData.length > 0 ? (
+                <>
+                  <Table hoverable className="shadow-md w-full">
+                    <TableHead>
+                      <TableHeadCell>user name</TableHeadCell>
+                      <TableHeadCell>first name</TableHeadCell>
+                      <TableHeadCell>last name</TableHeadCell>
+                      <TableHeadCell>position</TableHeadCell>
+                      <TableHeadCell>email</TableHeadCell>
+                      <TableHeadCell>phone number</TableHeadCell>
+                      <TableHeadCell>
+                        <span className="sr-only">Edit</span>
+                      </TableHeadCell>
+                    </TableHead>
+                    {currentData.map((user) => (
+                      <Table.Body className="divide-y" key={user.id}>
+                        <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                          <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white flex items-center">
+                            <Avatar
+                              alt={user.username}
+                              img={user.profilepicurl}
+                              rounded
+                              className="mr-3"
+                            />
+                            {user.username}
+                          </TableCell>
+                          <TableCell>{user.firstname}</TableCell>
+                          <TableCell>{user.lastname}</TableCell>
+                          <TableCell>{user.role}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>{user.phone}</TableCell>
+                          <TableCell>
+                            <Button.Group>
+                              <Button
+                                onClick={() => {
+                                  setOpenModalEdit(true);
+                                  setFormData(user);
+                                }}
+                                color="gray"
+                              >
+                                <FaUserEdit className="mr-3 h-4 w-4" />
+                                Edit
+                              </Button>
+                              <Button
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setUserIdToDelete(user.id);
+                                }}
+                                color="gray"
+                              >
+                                <MdDeleteForever className="mr-3 h-4 w-4" />
+                                Delete
+                              </Button>
+                            </Button.Group>
+                          </TableCell>
+                        </TableRow>
+                      </Table.Body>
+                    ))}
+                  </Table>
+                  {/* Pagination */}
+                  <div className="flex overflow-x-auto sm:justify-center">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={onPageChange}
+                      showIcons
+                    />
+                  </div>
+                  {/* {showMore && (
             <button
               onClick={handleShowMore}
               className="w-full text-teal-500 self-center text-sm py-7"
@@ -835,9 +844,11 @@ export default function DashCustomers() {
               Show more
             </button>
           )} */}
+                </>
+              ) : (
+                <p>You have no users yet!</p>
+              )}
             </>
-          ) : (
-            <p>You have no users yet!</p>
           )}
           <Modal
             show={showModal}
