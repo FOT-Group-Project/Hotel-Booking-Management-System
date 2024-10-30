@@ -55,24 +55,29 @@ function createUser(req, res) {
 function deleteUser(req, res) {
   const { id } = req.params;
 
-  models.User.destroy({
-    where: {
-      id: id,
-    },
-  })
-    .then((user) => {
-      res.status(200).json({
-        success: true,
-        user: user,
-        message: "User deleted successfully",
-      });
-    })
-    .catch((err) => {
+  models.User.findByPk(id).then((user) => {
+    if (!user) {
       res.status(400).json({
         success: false,
-        message: err.message,
+        message: "User not found",
       });
-    });
+    } else {
+      user
+        .destroy()
+        .then(() => {
+          res.status(200).json({
+            success: true,
+            message: "User deleted successfully",
+          });
+        })
+        .catch((err) => {
+          res.status(400).json({
+            success: false,
+            message: err.message,
+          });
+        });
+    }
+  });
 }
 
 // Get all customers using view GetAllCustomers in MySQL
