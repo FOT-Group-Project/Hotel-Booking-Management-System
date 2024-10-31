@@ -13,14 +13,18 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Room.init({
-    room_name: DataTypes.STRING,
-    category_id: DataTypes.INTEGER,
-    user_id: DataTypes.INTEGER,
-    availability: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'Room',
-  });
+  Room.init(
+    {
+      room_name: DataTypes.STRING,
+      category_id: DataTypes.INTEGER,
+      user_id: DataTypes.INTEGER,
+      availability: DataTypes.BOOLEAN,
+    },
+    {
+      sequelize,
+      modelName: "Room",
+      paranoid: true,
+    }
+  );
   return Room;
 };
