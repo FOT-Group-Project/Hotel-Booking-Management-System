@@ -2,6 +2,8 @@ const models = require("../models");
 
 function createRoomCategory(req, res) {
   const { category_name, price, description } = req.body;
+  const room_image = req.file ? req.file.filename : null;
+
   models.RoomCategory.findOne({ where: { category_name: category_name } })
     .then((roomcategory) => {
       if (roomcategory) {
@@ -14,6 +16,7 @@ function createRoomCategory(req, res) {
           category_name: category_name,
           price: price,
           description: description,
+          image: room_image,
         })
           .then((roomcategory) => {
             res.status(201).json({
@@ -90,6 +93,8 @@ function deleteRoomCategory(req, res) {
 function updateRoomCategory(req, res) {
   const { id } = req.params;
   const { category_name, price, description } = req.body;
+  const room_image = req.file ? req.file.filename : null;
+
   models.RoomCategory.findByPk(id)
     .then((roomcategory) => {
       if (!roomcategory) {
@@ -103,6 +108,7 @@ function updateRoomCategory(req, res) {
             category_name: category_name,
             price: price,
             description: description,
+            image: room_image,
           })
           .then((roomcategory) => {
             res.status(200).json({
