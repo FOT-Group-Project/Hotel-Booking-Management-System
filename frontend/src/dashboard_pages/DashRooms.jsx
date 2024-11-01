@@ -204,7 +204,7 @@ export default function DashRooms() {
 
       const res = await fetch(`/api/room/update/${editedCategory.id}`, {
         method: "PUT",
-        body: formData,
+        body: formData, // Use FormData directly here
       });
 
       const data = await res.json();
@@ -214,7 +214,6 @@ export default function DashRooms() {
         setEditedCategory(null); // Clear the edited category
         setImagePreview(null); // Clear image preview after editing
         setEditImagePreview(null); // Clear edit image preview on successful update
-        setUpdateLoding(false);
       } else {
         setUpdateLoding(false);
         setShowAlert(true);
@@ -514,17 +513,31 @@ export default function DashRooms() {
                                 )}
                               </TableCell>
                               <TableCell>
-                                <Button
-                                  onClick={() => {
-                                    setShowDeleteConfirmetion(true); // Open the modal
-                                    setUserIdToDelete(room.id); // Set the ID of the category to delete
-                                  }}
-                                  color="gray"
-                                  className="w-full mb-2"
-                                >
-                                  <MdDeleteForever className=" h-4 w-4" />
-                                  Delete
-                                </Button>
+                                <ButtonGroup>
+                                  <Button
+                                    onClick={() => {
+                                      setOpenModalEdit(true);
+                                      setEditedCategory(room); // Set the roomCategory to edit
+                                    }}
+                                    color="gray"
+                                    className="w-full mb-2"
+                                  >
+                                    <FaUserEdit className="h-4 w-4 " />
+                                    Edit
+                                  </Button>
+
+                                  <Button
+                                    onClick={() => {
+                                      setShowDeleteConfirmetion(true); // Open the modal
+                                      setUserIdToDelete(room.id); // Set the ID of the category to delete
+                                    }}
+                                    color="gray"
+                                    className="w-full mb-2"
+                                  >
+                                    <MdDeleteForever className=" h-4 w-4" />
+                                    Delete
+                                  </Button>
+                                </ButtonGroup>
                               </TableCell>
                             </TableRow>
                             {/* hr line */}
