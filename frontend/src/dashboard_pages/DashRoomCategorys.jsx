@@ -43,13 +43,18 @@ export default function DashRoomCategorys() {
     image: null,
   });
   const [imagePreview, setImagePreview] = useState(null);
+  const [editImagePreview, setEditImagePreview] = useState(null);
   const [roomCategory, setRoomCategory] = useState([]);
   const [createLoding, setCreateLoding] = useState(null);
+  const [updateLoding, setUpdateLoding] = useState(null);
   const [fetchLoding, setFetchLoding] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [showDeleteConfirmetion, setShowDeleteConfirmetion] = useState(false);
+  const [openModalEdit, setOpenModalEdit] = useState(false);
+
   const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [editedCategory, setEditedCategory] = useState(null);
 
   const fetchRoomCategory = async () => {
     try {
@@ -86,19 +91,33 @@ export default function DashRoomCategorys() {
     const { id, value, files } = e.target;
     if (id === "dropzone-file" && files && files[0]) {
       const file = files[0];
-      setFormData({ ...formData, image: file });
+      if (editedCategory) {
+        setEditedCategory({ ...editedCategory, image: file });
+      } else {
+        setFormData({ ...formData, image: file });
+      }
       setImagePreview(URL.createObjectURL(file));
     } else {
-      setFormData({ ...formData, [id]: value });
+      if (editedCategory) {
+        setEditedCategory({ ...editedCategory, [id]: value });
+      } else {
+        setFormData({ ...formData, [id]: value });
+      }
     }
 
-    console.log(formData); // Log the current formData state
+    console.log(editedCategory || formData); // Log the current state
   };
 
   const handleDrop = (files) => {
     if (files && files[0]) {
-      setFormData({ ...formData, image: files[0] });
-      setImagePreview(URL.createObjectURL(files[0])); // Generate preview URL
+      const file = files[0];
+      if (editedCategory) {
+        setEditedCategory({ ...editedCategory, image: file });
+        setEditImagePreview(URL.createObjectURL(file)); // Set image preview for edit modal
+      } else {
+        setFormData({ ...formData, image: file });
+      }
+      setImagePreview(URL.createObjectURL(file)); // Generate preview URL
     }
   };
 
@@ -180,6 +199,49 @@ export default function DashRoomCategorys() {
     }
   };
 
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setUpdateLoding(true);
+      const formDataToSend = new FormData();
+      formDataToSend.append("category_name", editedCategory.category_name);
+      formDataToSend.append("price", editedCategory.price);
+      formDataToSend.append("description", editedCategory.description);
+      if (editedCategory.image) {
+        formDataToSend.append("image", editedCategory.image);
+      }
+
+      const res = await fetch(
+        `/api/roomcategory/updateroomcategory/${editedCategory.id}`,
+        {
+          method: "PUT",
+          body: formDataToSend,
+        }
+      );
+      const data = await res.json();
+
+      if (res.ok) {
+        fetchRoomCategory(); // Refresh the list after updating
+        setOpenModalEdit(false); // Close the edit modal
+        setEditedCategory(null); // Clear the edited category
+        setImagePreview(null); // Clear image preview after editing
+        setEditImagePreview(null); // Clear edit image preview on successful update
+        setUpdateLoding(false);
+      } else {
+        setUpdateLoding(false);
+        setShowAlert(true);
+        setAlertMessage(data.message);
+        setTimeout(() => {
+          setShowAlert(false);
+          setAlertMessage("");
+        }, 5000);
+      }
+    } catch (error) {
+      console.log(error.message);
+      setUpdateLoding(false);
+    }
+  };
+
   return (
     <div className="p-3 w-full">
       <AnimatePresence>
@@ -231,6 +293,102 @@ export default function DashRoomCategorys() {
                 </div>
               </Modal.Body>
             </motion.div>
+          </Modal>
+
+          <Modal
+            show={openModalEdit}
+            onClose={() => setOpenModalEdit(false)}
+            popup
+            size="md"
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
+                <div>
+                  <Label value="Room Category Name" />
+                  <TextInput
+                    id="category_name"
+                    type="text"
+                    required
+                    shadow
+                    onChange={(e) =>
+                      setEditedCategory({
+                        ...editedCategory,
+                        category_name: e.target.value,
+                      })
+                    }
+                    value={editedCategory?.category_name || ""}
+                  />
+                </div>
+                <div>
+                  <Label value="Price" />
+                  <TextInput
+                    id="price"
+                    type="number"
+                    required
+                    shadow
+                    onChange={(e) =>
+                      setEditedCategory({
+                        ...editedCategory,
+                        price: e.target.value,
+                      })
+                    }
+                    value={editedCategory?.price || ""}
+                  />
+                </div>
+                <div>
+                  <Label value="Description" />
+                  <TextInput
+                    id="description"
+                    type="text"
+                    required
+                    shadow
+                    onChange={(e) =>
+                      setEditedCategory({
+                        ...editedCategory,
+                        description: e.target.value,
+                      })
+                    }
+                    value={editedCategory?.description || ""}
+                  />
+                </div>
+                <div>
+                  <Label value="Room Image" />
+                  {editedCategory?.image && (
+                    <img
+                      src={
+                        editedCategory.image instanceof File
+                          ? URL.createObjectURL(editedCategory.image)
+                          : `http://localhost:3001/uploads/${editedCategory.image}`
+                      }
+                      alt="Edited Room Preview"
+                      className="h-32 w-full object-cover rounded-lg mb-4 border border-gray-300 dark:border-gray-700"
+                    />
+                  )}
+                  <FileInput
+                    id="edit-dropzone-file"
+                    onChange={(e) => handleDrop(e.target.files, true)}
+                    accept="image/png, image/jpeg"
+                  />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    className="bg-customBlue"
+                    type="submit"
+                    disabled={updateLoding}
+                  >
+                    {updateLoding ? (
+                      <>
+                        <Spinner size="sm" />
+                        <span className="pl-3">Updating...</span>
+                      </>
+                    ) : (
+                      "Update Room Category"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </Modal.Body>
           </Modal>
 
           <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
@@ -306,7 +464,7 @@ export default function DashRoomCategorys() {
                       <img
                         src={imagePreview}
                         alt="Selected Room Preview"
-                        className="h-40 w-full object-cover rounded-lg"
+                        className="h-40 w-full object-cover rounded-lg border border-gray-300 dark:border-gray-700"
                       />
                       <button
                         type="button"
@@ -440,7 +598,7 @@ export default function DashRoomCategorys() {
                                   <Button
                                     onClick={() => {
                                       setOpenModalEdit(true);
-                                      setFormData(roomCategory);
+                                      setEditedCategory(roomCategory); // Set the roomCategory to edit
                                     }}
                                     color="gray"
                                     className="w-full mb-2"
