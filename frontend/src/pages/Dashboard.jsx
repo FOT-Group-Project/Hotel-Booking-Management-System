@@ -5,6 +5,8 @@ import DashSidebar from "../components/DashSidebar";
 import DashProfile from "../dashboard_pages/DashProfile";
 import DashUsers from "../dashboard_pages/DashUser";
 import DashCustomers from "../dashboard_pages/DashCustomers";
+import DashRooms from "../dashboard_pages/DashRooms";
+import DashRoomCategorys from "../dashboard_pages/DashRoomCategorys";
 
 export default function Dashboard() {
   const loaction = useLocation();
@@ -31,6 +33,10 @@ export default function Dashboard() {
       {tab === "users" && <DashUsers />}
       {/* customers */}
       {tab === "customers" && <DashCustomers />}
+      {/* rooms */}
+      {tab === "rooms" && <DashRooms />}
+      {/* room categorys */}
+      {tab === "room-category" && <DashRoomCategorys />}
     </div>
   );
 }
