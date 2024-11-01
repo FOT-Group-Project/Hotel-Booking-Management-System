@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const authRoutes = require("./routes/auth.route");
 const userRoutes = require("./routes/user.route");
@@ -9,7 +10,6 @@ const userRoutes = require("./routes/user.route");
 const roomRoutes = require("./routes/room.route");
 
 const roomCategoryRoutes = require("./routes/roomcategory.route");
-
 
 const app = express();
 
@@ -24,13 +24,15 @@ app.use(
   })
 );
 
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads/room_category"))
+);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
-
 app.use("/api/room", roomRoutes);
-
 app.use("/api/roomcategory", roomCategoryRoutes);
-
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
