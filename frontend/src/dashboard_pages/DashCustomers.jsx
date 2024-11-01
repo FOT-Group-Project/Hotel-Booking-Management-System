@@ -487,26 +487,16 @@ export default function DashCustomers() {
                       <div>
                         <div>
                           <div className="mb-2 block">
-                            <Label htmlFor="email2" value="Role" />
+                            <Label htmlFor="role" value="Role" />
                           </div>
-
-                          <Select
-                            onChange={(e) =>
-                              setFormData({ ...formData, role: e.target.value })
-                            }
+                          <TextInput
                             id="role"
-                            required
+                            type="text"
+                            value="customer"
+                            readOnly
+                            disabled
                             shadow
-                            disabled={imageFileUploading}
-                          >
-                            <option value="SelectRole">Select Role</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Director">Director</option>
-                            <option value="Seller">Seller</option>
-                            <option value="StoreKeeper">Store Keeper</option>
-                            <option value="StockQA">StockQA</option>
-                            <option value="Accountant">Accountant</option>
-                          </Select>
+                          />
                         </div>
                       </div>
                     </div>
@@ -703,25 +693,16 @@ export default function DashCustomers() {
                     <div className="gap-2">
                       <div>
                         <div className="mb-2 block">
-                          <Label htmlFor="email2" value="Role" />
+                          <Label htmlFor="role" value="Role" />
                         </div>
-                        <Select
-                          onChange={(e) =>
-                            setFormData({ ...formData, role: e.target.value })
-                          }
+                        <TextInput
                           id="role"
-                          required
+                          type="text"
+                          value="customer"
+                          readOnly
+                          disabled
                           shadow
-                          defaultValue={formData.role}
-                        >
-                          <option value="SelectRole">Select Role</option>
-                          <option value="Admin">Admin</option>
-                          <option value="Director">Director</option>
-                          <option value="Seller">Seller</option>
-                          <option value="StoreKeeper">Store Keeper</option>
-                          <option value="StockQA">StockQA</option>
-                          <option value="Accountant">Accountant</option>
-                        </Select>
+                        />
                       </div>
                     </div>
 

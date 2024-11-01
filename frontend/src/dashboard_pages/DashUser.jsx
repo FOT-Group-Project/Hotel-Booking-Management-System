@@ -500,7 +500,7 @@ export default function DashUser() {
                           >
                             <option value="SelectRole">Select Role</option>
                             <option value="admin">Admin</option>
-                            <option value="manager">Manager</option>
+                            <option value="customer">Customer</option>
                           </Select>
                         </div>
                       </div>
@@ -710,12 +710,9 @@ export default function DashUser() {
                           defaultValue={formData.role}
                         >
                           <option value="SelectRole">Select Role</option>
-                          <option value="Admin">Admin</option>
-                          <option value="Director">Director</option>
-                          <option value="Seller">Seller</option>
-                          <option value="StoreKeeper">Store Keeper</option>
-                          <option value="StockQA">StockQA</option>
-                          <option value="Accountant">Accountant</option>
+
+                          <option value="admin">Admin</option>
+                          <option value="customer">Customer</option>
                         </Select>
                       </div>
                     </div>
