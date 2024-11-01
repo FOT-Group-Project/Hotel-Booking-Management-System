@@ -50,6 +50,7 @@ export default function DashRoomCategorys() {
   const [alertMessage, setAlertMessage] = useState("");
 
   const fetchRoomCategory = async () => {
+
     try {
       setFetchLoding(true);
       const res = await fetch(`/api/roomcategory/getroomcategories`);
@@ -355,9 +356,7 @@ export default function DashRoomCategorys() {
                                 <div className="flex items-center gap-4">
                                   <div className="w-32 h-20 relative">
                                     <img
-                                      src={
-                                        "https://sthotelsmalta.com/wp-content/uploads/2022/06/modern-luxury-bedroom-suite-and-bathroom-with-working-table-2048x1327.jpg"
-                                      }
+                                      src={`http://localhost:3001/uploads/${roomCategory.image}`}
                                       alt=""
                                       className="w-full h-full object-cover rounded-lg"
                                     />
