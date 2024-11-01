@@ -311,8 +311,7 @@ export default function DashUser() {
 
           <div className="flex gap-3 justify-end">
             <Button
-              className="mb-3"
-              color="blue"
+              className="mb-3 bg-customBlue"
               size="sm"
               onClick={() => setOpenModal(true)}
             >
@@ -509,7 +508,7 @@ export default function DashUser() {
 
                     <div className="flex gap-2 justify-end">
                       <Button
-                        color="blue"
+                        className="bg-customBlue"
                         type="submit"
                         disabled={createLoding}
                       >
@@ -723,7 +722,7 @@ export default function DashUser() {
 
                     <div className="flex gap-2 justify-end">
                       <Button
-                        color="blue"
+                        className="bg-customBlue"
                         type="submit"
                         disabled={createLoding}
                       >
