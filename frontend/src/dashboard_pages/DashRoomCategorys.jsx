@@ -48,9 +48,10 @@ export default function DashRoomCategorys() {
   const [fetchLoding, setFetchLoding] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [showDeleteConfirmetion, setShowDeleteConfirmetion] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
 
   const fetchRoomCategory = async () => {
-
     try {
       setFetchLoding(true);
       const res = await fetch(`/api/roomcategory/getroomcategories`);
@@ -152,6 +153,33 @@ export default function DashRoomCategorys() {
     }
   };
 
+  const deleteRoomCategoryHandler = async () => {
+    if (!userIdToDelete) return; // Check if there's an ID to delete
+    try {
+      const res = await fetch(
+        `/api/roomcategory/deleteroomcategory/${userIdToDelete}`,
+        {
+          method: "DELETE",
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        fetchRoomCategory(); // Refresh the list after deletion
+        setShowDeleteConfirmetion(false); // Close the modal
+        setUserIdToDelete(null); // Clear the ID after deletion
+      } else {
+        setShowAlert(true);
+        setAlertMessage(data.message);
+        setTimeout(() => {
+          setShowAlert(false);
+          setAlertMessage("");
+        }, 5000);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="p-3 w-full">
       <AnimatePresence>
@@ -169,6 +197,41 @@ export default function DashRoomCategorys() {
             </Link>
             <Breadcrumb.Item>Room Category</Breadcrumb.Item>
           </Breadcrumb>
+
+          <Modal
+            show={showDeleteConfirmetion}
+            onClose={() => setShowDeleteConfirmetion(false)}
+            popup
+            size="md"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Modal.Header />
+              <Modal.Body>
+                <div className="text-center">
+                  <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+                  <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+                    Are you sure you want to delete this user?
+                  </h3>
+                  <div className="flex justify-center gap-4">
+                    <Button color="failure" onClick={deleteRoomCategoryHandler}>
+                      Yes, I'm sure
+                    </Button>
+                    <Button
+                      color="gray"
+                      onClick={() => setShowDeleteConfirmetion(false)}
+                    >
+                      No, cancel
+                    </Button>
+                  </div>
+                </div>
+              </Modal.Body>
+            </motion.div>
+          </Modal>
 
           <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
             All Category
@@ -388,8 +451,8 @@ export default function DashRoomCategorys() {
 
                                   <Button
                                     onClick={() => {
-                                      setShowModal(true);
-                                      setUserIdToDelete(roomCategory.id);
+                                      setShowDeleteConfirmetion(true); // Open the modal
+                                      setUserIdToDelete(roomCategory.id); // Set the ID of the category to delete
                                     }}
                                     color="gray"
                                   >

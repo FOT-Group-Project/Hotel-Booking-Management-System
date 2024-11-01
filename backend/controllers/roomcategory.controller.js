@@ -1,5 +1,6 @@
 const models = require("../models");
 
+// Create a new room category using mysql insert query
 function createRoomCategory(req, res) {
   const { category_name, price, description } = req.body;
   const room_image = req.file ? req.file.filename : null;
@@ -12,12 +13,20 @@ function createRoomCategory(req, res) {
           message: "Category already exists",
         });
       } else {
-        models.RoomCategory.create({
-          category_name: category_name,
-          price: price,
-          description: description,
-          image: room_image,
-        })
+        models.sequelize
+          .query(
+            "INSERT INTO roomcategories (category_name, price, description, image, createdAt, updatedAt ) VALUES (:category_name, :price, :description, :room_image, :createdAt, :updatedAt)",
+            {
+              replacements: {
+                category_name: category_name,
+                price: price,
+                description: description,
+                room_image: room_image,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              },
+            }
+          )
           .then((roomcategory) => {
             res.status(201).json({
               success: true,
