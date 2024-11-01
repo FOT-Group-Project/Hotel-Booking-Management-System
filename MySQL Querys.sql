@@ -114,15 +114,14 @@ DELIMITER //
 CREATE PROCEDURE CreateRoom(
     IN p_room_name VARCHAR(255),
     IN p_category_id INT,
-    IN p_user_id INT,
     IN p_availability BOOLEAN
 )
 BEGIN
     IF (SELECT COUNT(*) FROM rooms WHERE room_name = p_room_name AND deletedAt IS NULL) > 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Room already exists';
     ELSE
-        INSERT INTO rooms (room_name, category_id, user_id, availability, createdAt, updatedAt)
-        VALUES (p_room_name, p_category_id, p_user_id, p_availability, NOW(), NOW());
+        INSERT INTO rooms (room_name, category_id, availability, createdAt, updatedAt)
+        VALUES (p_room_name, p_category_id, p_availability, NOW(), NOW());
     END IF;
 END //
 DELIMITER ;
@@ -133,7 +132,6 @@ CREATE PROCEDURE UpdateRoom(
     IN p_id INT,
     IN p_room_name VARCHAR(255),
     IN p_category_id INT,
-    IN p_user_id INT,
     IN p_availability BOOLEAN
 )
 BEGIN
@@ -143,7 +141,6 @@ BEGIN
         UPDATE rooms
         SET room_name = p_room_name,
             category_id = p_category_id,
-            user_id = p_user_id,
             availability = p_availability,
             updatedAt = NOW()
         WHERE id = p_id;
@@ -163,6 +160,14 @@ BEGIN
 END //
 DELIMITER ;
 
+-- Get room all details combined with room category using VIEW
+CREATE VIEW RoomDetails
+AS
+SELECT r.id, r.room_name, r.availability, r.createdAt, r.updatedAt, rc.category_name, rc.price, rc.description, rc.image
+FROM rooms r
+JOIN roomcategories rc ON r.category_id = rc.id
+WHERE r.deletedAt IS NULL;
 
+SELECT * FROM RoomDetails;
 
 

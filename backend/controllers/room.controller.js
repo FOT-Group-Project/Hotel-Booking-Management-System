@@ -20,13 +20,13 @@ function getRooms(req, res) {
 
 // Create a new room using stored procedure
 function createRoom(req, res) {
-  const { room_name, category_id, user_id, availability } = req.body;
+  const { room_name, category_id, availability } = req.body;
 
   models.sequelize
     .query(
-      "CALL CreateRoom(:room_name, :category_id, :user_id, :availability)",
+      "CALL CreateRoom(:room_name, :category_id, :availability)",
       {
-        replacements: { room_name, category_id, user_id, availability },
+        replacements: { room_name, category_id, availability },
       }
     )
     .then((result) => {
@@ -46,13 +46,13 @@ function createRoom(req, res) {
 // Update room category using stored procedure
 function updateRoom(req, res) {
   const { id } = req.params;
-  const { room_name, category_id, user_id, availability } = req.body;
+  const { room_name, category_id, availability } = req.body;
 
   models.sequelize
     .query(
-      "CALL UpdateRoom(:id, :room_name, :category_id, :user_id, :availability)",
+      "CALL UpdateRoom(:id, :room_name, :category_id, :availability)",
       {
-        replacements: { id, room_name, category_id, user_id, availability },
+        replacements: { id, room_name, category_id, availability },
       }
     )
     .then((result) => {
@@ -91,9 +91,28 @@ function deleteRoom(req, res) {
     });
 }
 
+// Get all room details using view
+function getRoomsAllDetails(req, res) {
+  models.sequelize
+    .query("SELECT * FROM RoomDetails")
+    .then((rooms) => {
+      res.status(200).json({
+        success: true,
+        rooms: rooms[0],
+      });
+    })
+    .catch((err) => {
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    });
+}
+
 module.exports = {
   getRooms: getRooms,
   createRoom: createRoom,
   updateRoom: updateRoom,
   deleteRoom: deleteRoom,
+  getRoomsAllDetails: getRoomsAllDetails,
 };
