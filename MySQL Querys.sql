@@ -8,7 +8,7 @@ SELECT * FROM users WHERE role = "customer" AND deletedAt IS NULL;
 
 SELECT * FROM GetAllCustomers;
 
-
+-- Room Categories Table Stored Procedures
 -- Create a stored procedure to create a new room category
 DELIMITER //
 CREATE PROCEDURE CreateRoomCategory(
@@ -98,3 +98,71 @@ BEGIN
     WHERE deletedAt IS NULL;
 END //
 DELIMITER ;
+
+
+-- Rooms Table Stored Procedures
+-- Create a stored procedure to create a new room
+DELIMITER //
+CREATE PROCEDURE GetRooms()
+BEGIN
+    SELECT * FROM rooms WHERE deletedAt IS NULL;  
+END //
+DELIMITER ;
+
+-- Create a stored procedure to create a new room
+DELIMITER //
+CREATE PROCEDURE CreateRoom(
+    IN p_room_name VARCHAR(255),
+    IN p_category_id INT,
+    IN p_user_id INT,
+    IN p_availability BOOLEAN
+)
+BEGIN
+    IF (SELECT COUNT(*) FROM rooms WHERE room_name = p_room_name AND deletedAt IS NULL) > 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Room already exists';
+    ELSE
+        INSERT INTO rooms (room_name, category_id, user_id, availability, createdAt, updatedAt)
+        VALUES (p_room_name, p_category_id, p_user_id, p_availability, NOW(), NOW());
+    END IF;
+END //
+DELIMITER ;
+
+-- Create a stored procedure to update a room
+DELIMITER //
+CREATE PROCEDURE UpdateRoom(
+    IN p_id INT,
+    IN p_room_name VARCHAR(255),
+    IN p_category_id INT,
+    IN p_user_id INT,
+    IN p_availability BOOLEAN
+)
+BEGIN
+    IF (SELECT COUNT(*) FROM rooms WHERE id = p_id) = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Room not found';
+    ELSE
+        UPDATE rooms
+        SET room_name = p_room_name,
+            category_id = p_category_id,
+            user_id = p_user_id,
+            availability = p_availability,
+            updatedAt = NOW()
+        WHERE id = p_id;
+    END IF;
+END //
+DELIMITER ;
+
+-- Create a stored procedure to soft delete a room
+DELIMITER //
+CREATE PROCEDURE DeleteRoom(IN p_id INT)
+BEGIN
+    IF (SELECT COUNT(*) FROM rooms WHERE id = p_id) = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Room not found';
+    ELSE
+        UPDATE rooms SET deletedAt = NOW() WHERE id = p_id;
+    END IF;
+END //
+DELIMITER ;
+
+
+
+

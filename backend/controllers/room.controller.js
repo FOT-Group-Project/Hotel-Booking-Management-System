@@ -1,8 +1,9 @@
 const models = require("../models");
 
-//get all rooms
+// Get all room using stored procedure
 function getRooms(req, res) {
-  models.Room.findAll()
+  models.sequelize
+    .query("CALL GetRooms()")
     .then((rooms) => {
       res.status(200).json({
         success: true,
@@ -17,40 +18,22 @@ function getRooms(req, res) {
     });
 }
 
-//Create a new room
+// Create a new room using stored procedure
 function createRoom(req, res) {
   const { room_name, category_id, user_id, availability } = req.body;
-  models.Room.findOne({
-    where: {
-      room_name: room_name,
-    },
-  })
-    .then((room) => {
-      if (room) {
-        res.status(400).json({
-          success: false,
-          message: "Room already exists",
-        });
-      } else {
-        models.Room.create({
-          room_name: room_name,
-          category_id: category_id,
-          user_id: user_id,
-          availability: availability,
-        })
-          .then((room) => {
-            res.status(201).json({
-              success: true,
-              room: room,
-            });
-          })
-          .catch((err) => {
-            res.status(400).json({
-              success: false,
-              message: err.message,
-            });
-          });
+
+  models.sequelize
+    .query(
+      "CALL CreateRoom(:room_name, :category_id, :user_id, :availability)",
+      {
+        replacements: { room_name, category_id, user_id, availability },
       }
+    )
+    .then((result) => {
+      res.status(201).json({
+        success: true,
+        message: "Room created successfully",
+      });
     })
     .catch((err) => {
       res.status(400).json({
@@ -60,65 +43,52 @@ function createRoom(req, res) {
     });
 }
 
-//Update a room
+// Update room category using stored procedure
 function updateRoom(req, res) {
   const { id } = req.params;
   const { room_name, category_id, user_id, availability } = req.body;
-  models.Room.findByPk(id).then((room) => {
-    if (!room) {
+
+  models.sequelize
+    .query(
+      "CALL UpdateRoom(:id, :room_name, :category_id, :user_id, :availability)",
+      {
+        replacements: { id, room_name, category_id, user_id, availability },
+      }
+    )
+    .then((result) => {
+      res.status(200).json({
+        success: true,
+        message: "Room updated successfully",
+      });
+    })
+    .catch((err) => {
       res.status(400).json({
         success: false,
-        message: "Room not found",
+        message: err.message,
       });
-    } else {
-      room.room_name = room_name;
-      room.category_id = category_id;
-      room.user_id = user_id;
-      room.availability = availability;
-      room
-        .save()
-        .then((room) => {
-          res.status(200).json({
-            success: true,
-            room: room,
-          });
-        })
-        .catch((err) => {
-          res.status(400).json({
-            success: false,
-            message: err.message,
-          });
-        });
-    }
-  });
+    });
 }
 
-//Delete a room
+// Delete room category using stored procedure
 function deleteRoom(req, res) {
   const { id } = req.params;
-  models.Room.findByPk(id).then((room) => {
-    if (!room) {
+
+  models.sequelize
+    .query("CALL DeleteRoom(:id)", {
+      replacements: { id },
+    })
+    .then((result) => {
+      res.status(200).json({
+        success: true,
+        message: "Room deleted successfully",
+      });
+    })
+    .catch((err) => {
       res.status(400).json({
         success: false,
-        message: "Room not found",
+        message: err.message,
       });
-    } else {
-      room
-        .destroy()
-        .then(() => {
-          res.status(200).json({
-            success: true,
-            message: "Room deleted successfully",
-          });
-        })
-        .catch((err) => {
-          res.status(400).json({
-            success: false,
-            message: err.message,
-          });
-        });
-    }
-  });
+    });
 }
 
 module.exports = {
