@@ -54,7 +54,7 @@ export default function DashCheckOut() {
   const [alertMessage, setAlertMessage] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
-  const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [bookedCheckOut, setBookedCheckOut] = useState([]);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,27 +69,32 @@ export default function DashCheckOut() {
   // Pagination
 
   const formatDate = (date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(new Date(date));
+    if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
+    try {
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(new Date(date));
+    } catch {
+      return "Invalid Date";
+    }
   };
 
   const calculateDaysBetween = (date_in, date_out) => {
+    if (!date_in || !date_out) return "N/A";
     const startDate = new Date(date_in);
     const endDate = new Date(date_out);
+    if (isNaN(startDate) || isNaN(endDate)) return "N/A";
 
     const differenceInTime = endDate - startDate;
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-
-    return differenceInDays;
+    return differenceInTime / (1000 * 3600 * 24);
   };
 
   const fetchBookedDetails = async () => {
     try {
       setFetchLoding(true);
-      const res = await fetch(`/api/booked/checked-details`);
+      const res = await fetch(`/api/booked/checked-out-details`);
       const data = await res.json();
       if (res.ok) {
         setBookedDetails(data.data);
@@ -106,6 +111,46 @@ export default function DashCheckOut() {
     } catch (error) {
       console.log(error.message);
       setFetchLoding(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setCreateLoding(true);
+      const res = await fetch(`/api/booked/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ref_no: bookedCheckOut.ref_no,
+          room_id: bookedCheckOut.room_id,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setCreateLoding(false);
+        setOpenModal(false);
+        fetchBookedDetails();
+        setShowAlert(true);
+        setAlertMessage(data.message);
+        setTimeout(() => {
+          setShowAlert(false);
+          setAlertMessage("");
+        }, 10000);
+      } else {
+        setCreateLoding(false);
+        setShowAlert(true);
+        setAlertMessage(data.message);
+        setTimeout(() => {
+          setShowAlert(false);
+          setAlertMessage("");
+        }, 10000);
+      }
+    } catch (error) {
+      console.log(error.message);
+      setCreateLoding(false);
     }
   };
 
@@ -128,11 +173,119 @@ export default function DashCheckOut() {
                 Home
               </Breadcrumb.Item>
             </Link>
-            <Breadcrumb.Item>Booking</Breadcrumb.Item>
+            <Breadcrumb.Item>Check Out</Breadcrumb.Item>
           </Breadcrumb>
 
+          <Modal show={openModal} onClose={() => setOpenModal(false)} size="md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Modal.Header>
+                <h1 className="text-xl font-semibold">Check In Room</h1>
+              </Modal.Header>
+
+              <Modal.Body>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                  <div>
+                    <Label value="Reference No : " />
+                    {bookedCheckOut.ref_no}
+                  </div>
+
+                  <div>
+                    <Label value="Name : " />
+                    {bookedCheckOut.name}
+                  </div>
+
+                  <div>
+                    <Label value="Contact No : " />
+                    {bookedCheckOut.contact_no}
+                  </div>
+
+                  <div>
+                    <Label value="Room Name : " />
+                    {bookedCheckOut.room_name}
+                  </div>
+
+                  <div>
+                    <Label value="Check In Date : " />
+                    {formatDate(bookedCheckOut.date_in)}
+                  </div>
+
+                  <div>
+                    <Label value="Check Out Date : " />
+                    {formatDate(bookedCheckOut.date_out)}
+                  </div>
+
+                  <div>
+                    <Label value="No of Days : " />
+                    {calculateDaysBetween(
+                      bookedCheckOut.date_in,
+                      bookedCheckOut.date_out
+                    )}{" "}
+                    days
+                  </div>
+
+                  <div>
+                    <Label value="Total Price : " />
+                    <b>Rs. {bookedCheckOut.total_price}</b>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Label value="Status : " />
+
+                    <div className="w-28">
+                      {bookedCheckOut.status_description === "Checked Out" ? (
+                        <Badge color="success" size="lg">
+                          Checked Out
+                        </Badge>
+                      ) : bookedCheckOut.status_description === "Checked In" ? (
+                        <Badge color="warning" size="lg">
+                          Checked In
+                        </Badge>
+                      ) : bookedCheckOut.status_description === "Canceled" ? (
+                        <Badge color="info" size="lg">
+                          Canceled
+                        </Badge>
+                      ) : (
+                        <Badge color="warning" size="lg">
+                          Pending
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 justify-end">
+                    <Button color="failure" onClick={() => setOpenModal(false)}>
+                      Close
+                    </Button>
+                    <Button
+                      className="bg-customBlue"
+                      type="submit"
+                      disabled={createLoding}
+                    >
+                      {createLoding ? (
+                        <>
+                          <Spinner size="sm" />
+                          <span className="pl-3">Checking...</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaSignOutAlt className="mr-2 mt-1" />
+                          Check Out
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Modal.Body>
+            </motion.div>
+          </Modal>
+
           <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
-            All Booking Details
+            Check Out Room
           </h1>
 
           {fetchLoding ? (
@@ -154,6 +307,9 @@ export default function DashCheckOut() {
                       <TableHeadCell>No of Days</TableHeadCell>
                       <TableHeadCell>Total Price</TableHeadCell>
                       <TableHeadCell>Status</TableHeadCell>
+                      <TableHeadCell>
+                        <span className="sr-only">Edit</span>
+                      </TableHeadCell>
                     </TableHead>
                     {currentData.map((bookedDetails) => (
                       <Table.Body className="divide-y" key={bookedDetails.id}>
@@ -201,6 +357,19 @@ export default function DashCheckOut() {
                               </Badge>
                             )}
                           </TableCell>
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              layout="outline"
+                              onClick={() => {
+                                setBookedCheckOut(bookedDetails);
+                                setOpenModal(true);
+                              }}
+                              className="bg-customBlue"
+                            >
+                              <FaSignOutAlt />
+                            </Button>
+                          </TableCell>
                         </TableRow>
                         {/* hr line */}
                         <TableRow>
@@ -220,7 +389,12 @@ export default function DashCheckOut() {
                   </div>
                 </>
               ) : (
-                <p>You have no users yet!</p>
+                <div className="flex flex-col items-center justify-center h-96">
+                  <HiInformationCircle className="text-4xl text-gray-400" />
+                  <h1 className="text-xl font-semibold mt-3 text-gray-400">
+                    No data found
+                  </h1>
+                </div>
               )}
             </>
           )}

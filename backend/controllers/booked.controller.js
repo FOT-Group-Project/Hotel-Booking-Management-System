@@ -14,7 +14,7 @@ function checkIn(req, res) {
     });
   }
 
-  if (new Date(date_in) < new Date()) {
+  if (new Date(date_in) + 1 < new Date()) {
     return res.status(400).json({
       success: false,
       message: "Check-in date should be future date",
@@ -110,7 +110,7 @@ function getAllDetailsChecked(req, res) {
 // Get all CheckedOut table data using view
 function getAllDetailsCheckedOut(req, res) {
   models.sequelize
-    .query("SELECT * FROM CheckedOutDetails WHERE status = 1")
+    .query("SELECT * FROM CheckedDetails WHERE status = 1")
     .then((result) => {
       res.status(200).json({
         success: true,

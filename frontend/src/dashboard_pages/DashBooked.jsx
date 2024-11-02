@@ -58,7 +58,7 @@ export default function DashBooked() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(bookedDetails.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
@@ -220,7 +220,12 @@ export default function DashBooked() {
                   </div>
                 </>
               ) : (
-                <p>You have no users yet!</p>
+                <div className="flex flex-col items-center justify-center h-96">
+                  <HiInformationCircle className="text-4xl text-gray-400" />
+                  <h1 className="text-xl font-semibold mt-3 text-gray-400">
+                    No data found
+                  </h1>
+                </div>
               )}
             </>
           )}
