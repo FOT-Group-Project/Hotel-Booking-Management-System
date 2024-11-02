@@ -4,9 +4,6 @@ const models = require("../models");
 function checkIn(req, res) {
   const { room_id, name, contact_no, date_in, date_out, booked_cid } = req.body;
 
-  // I need to genarate a random reference number. use room_id and date_in to generate a random number and character
-  // Name should be the part of the name
-
   const ref_no =
     "RFC-" + name.split(" ")[0].toUpperCase() + "-" + room_id + "-" + date_in;
 
@@ -91,7 +88,27 @@ function checkOut(req, res) {
     });
 }
 
+// Get all Checked table data using view
+function getAllDetailsChecked(req, res) {
+  models.sequelize
+    .query("SELECT * FROM CheckedDetails")
+    .then((result) => {
+      res.status(200).json({
+        success: true,
+        message: "Checked data fetched successfully",
+        data: result[0],
+      });
+    })
+    .catch((err) => {
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    });
+}
+
 module.exports = {
   checkIn: checkIn,
   checkOut: checkOut,
+  getAllDetailsChecked: getAllDetailsChecked,
 };
