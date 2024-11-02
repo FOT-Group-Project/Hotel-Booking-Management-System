@@ -500,16 +500,16 @@ export default function DashRooms() {
                               </TableCell>
                               <TableCell>{room.room_name}</TableCell>
                               <TableCell>{room.category_name}</TableCell>
-                              <TableCell>{room.price}</TableCell>
                               <TableCell>
-                                {room.availability == 1 ? (
-                                  <Badge color="success" size="sm">
-                                    Available
-                                  </Badge>
+                                <b>Rs. {room.price}.00</b>{" "}
+                              </TableCell>
+                              <TableCell>
+                                {room.status === "available" ? (
+                                  <Badge color="success">Available</Badge>
+                                ) : room.status === "occupied" ? (
+                                  <Badge color="warning">Occupied</Badge>
                                 ) : (
-                                  <Badge color="failure" size="sm">
-                                    Unavailable
-                                  </Badge>
+                                  <Badge color="failure">Unavailable</Badge>
                                 )}
                               </TableCell>
                               <TableCell>
