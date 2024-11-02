@@ -7,6 +7,8 @@ import DashUsers from "../dashboard_pages/DashUser";
 import DashCustomers from "../dashboard_pages/DashCustomers";
 import DashRooms from "../dashboard_pages/DashRooms";
 import DashRoomCategorys from "../dashboard_pages/DashRoomCategorys";
+import DashCheckIn from "../dashboard_pages/DashCheckIn";
+import DashCheckOut from "../dashboard_pages/DashCheckOut";
 
 export default function Dashboard() {
   const loaction = useLocation();
@@ -37,6 +39,10 @@ export default function Dashboard() {
       {tab === "rooms" && <DashRooms />}
       {/* room categorys */}
       {tab === "room-category" && <DashRoomCategorys />}
+      {/* check in */}
+      {tab === "check-in" && <DashCheckIn />}
+      {/* check out */}
+      {tab === "check-out" && <DashCheckOut />}
     </div>
   );
 }
