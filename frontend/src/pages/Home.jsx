@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Carousel, Footer, Card } from "flowbite-react";
+import { Button, Carousel, Footer, Card, Spinner } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import {
   BsDribbble,
@@ -41,9 +41,7 @@ export default function Home() {
     fetchRoomCategory();
   }, []);
 
-  const rooms = [
-    
-  ];
+  const rooms = [];
   return (
     <div className="relative">
       {/* Hero Section with Image Carousel */}
@@ -140,25 +138,33 @@ export default function Home() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {roomCategory.map((room) => (
-              <Card
-                key={room.id}
-                imgSrc={`http://localhost:3001/uploads/${room.image}`}
-                className="overflow-hidden shadow-lg rounded-lg "
-                // image with 600px and high 400px
-              >
-                <h3 className="text-2xl font-semibold mb-2">
-                  {room.category_name}
-                </h3>
-                <p className="text-gray-600 mb-1">{room.description}</p>
-                <div className="flex items-center justify-between text-gray-600 text-lg mb-2">
-                  <span>
-                    <b>Rs {room.price}.00</b>{" "}
-                  </span>
-                </div>
-                <Button className="bg-customBlue">Book Now</Button>
-              </Card>
-            ))}
+            {fetchLoding ? (
+              <div className="flex justify-center items-center h-96">
+                <Spinner size="xl" />
+              </div>
+            ) : (
+              <>
+                {roomCategory.map((room) => (
+                  <Card
+                    key={room.id}
+                    imgSrc={`http://localhost:3001/uploads/${room.image}`}
+                    className="overflow-hidden shadow-lg rounded-lg "
+                    // image with 600px and high 400px
+                  >
+                    <h3 className="text-2xl font-semibold mb-2">
+                      {room.category_name}
+                    </h3>
+                    <p className="text-gray-600 mb-1">{room.description}</p>
+                    <div className="flex items-center justify-between text-gray-600 text-lg mb-2">
+                      <span>
+                        <b>Rs {room.price}.00</b>{" "}
+                      </span>
+                    </div>
+                    <Button className="bg-customBlue">Book Now</Button>
+                  </Card>
+                ))}
+              </>
+            )}
           </div>
         </div>
       </section>
