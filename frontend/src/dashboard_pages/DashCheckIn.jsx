@@ -211,6 +211,7 @@ export default function DashCheckIn() {
                     required
                     shadow
                     onChange={(e) => handleChange(e)}
+                    placeholder="Kasun Perera"
                   />
                 </div>
 
@@ -222,6 +223,7 @@ export default function DashCheckIn() {
                     required
                     shadow
                     onChange={(e) => handleChange(e)}
+                    placeholder="0712345678"
                   />
                 </div>
 

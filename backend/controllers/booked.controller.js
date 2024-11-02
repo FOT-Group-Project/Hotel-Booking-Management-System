@@ -5,7 +5,10 @@ function checkIn(req, res) {
   const { room_id, name, contact_no, date_in, date_out, booked_cid } = req.body;
 
   // I need to genarate a random reference number. use room_id and date_in to generate a random number and character
-  const ref_no = "RFC-" + name.toUpperCase() + "-" + room_id + "-" + date_in;
+  // Name should be the part of the name
+
+  const ref_no =
+    "RFC-" + name.split(" ")[0].toUpperCase() + "-" + room_id + "-" + date_in;
 
   if (new Date(date_in) > new Date(date_out)) {
     return res.status(400).json({
