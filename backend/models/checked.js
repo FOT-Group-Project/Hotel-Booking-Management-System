@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Room extends Model {
+  class Checked extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,23 +11,23 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Room.init(
+  Checked.init(
     {
-      room_name: DataTypes.STRING,
-      category_id: DataTypes.INTEGER,
-      user_id: DataTypes.INTEGER,
-      availability: DataTypes.BOOLEAN,
-      status: {
-        type: DataTypes.ENUM,
-        values: ["available", "occupied", "maintenance"],
-        defaultValue: "available", // Default to available when a new room is created
-      },
+      ref_no: DataTypes.STRING,
+      room_id: DataTypes.INTEGER,
+      name: DataTypes.TEXT,
+      contact_no: DataTypes.STRING,
+      date_in: DataTypes.DATE,
+      date_out: DataTypes.DATE,
+      booked_cid: DataTypes.INTEGER,
+      status: DataTypes.TINYINT,
+      date_updated: DataTypes.DATE,
     },
     {
       sequelize,
-      modelName: "Room",
+      modelName: "Checked",
       paranoid: true,
     }
   );
-  return Room;
+  return Checked;
 };
