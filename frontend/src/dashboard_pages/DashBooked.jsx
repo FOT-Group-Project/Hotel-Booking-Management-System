@@ -152,6 +152,7 @@ export default function DashBooked() {
                       <TableHeadCell>Check In Date</TableHeadCell>
                       <TableHeadCell>Check Out Date</TableHeadCell>
                       <TableHeadCell>No of Days</TableHeadCell>
+                      <TableHeadCell>Total Price</TableHeadCell>
                       <TableHeadCell>Status</TableHeadCell>
                     </TableHead>
                     {currentData.map((bookedDetails) => (
@@ -173,6 +174,9 @@ export default function DashBooked() {
                               bookedDetails.date_out
                             )}{" "}
                             days
+                          </TableCell>
+                          <TableCell>
+                            <b>Rs. {bookedDetails.total_price}</b>
                           </TableCell>
 
                           <TableCell>
