@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Carousel, Footer, Card } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -19,62 +19,30 @@ import image3 from "../assets/heroSlider/3.jpg";
 import room1 from "../assets/rooms/1-lg.png";
 
 export default function Home() {
-  const rooms = [
-    {
-      id: 1,
-      name: "Deluxe Room",
-      size: "50M²",
-      maxPeople: 3,
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      price: "$265",
-      image: "room1", // Replace with actual image URL
-    },
-    {
-      id: 2,
-      name: "Luxury Room",
-      size: "50M²",
-      maxPeople: 4,
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      price: "$289",
-      image: "https://via.placeholder.com/400", // Replace with actual image URL
-    },
-    {
-      id: 3,
-      name: "Luxury Suite Room",
-      size: "90M²",
-      maxPeople: 5,
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      price: "$320",
-      image: "https://via.placeholder.com/400", // Replace with actual image URL
-    },
+  const [fetchLoding, setFetchLoding] = useState(null);
+  const [roomCategory, setRoomCategory] = useState([]);
 
-    {
-      id: 1,
-      name: "Deluxe Room",
-      size: "50M²",
-      maxPeople: 3,
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      price: "$265",
-      image: "https://via.placeholder.com/400", // Replace with actual image URL
-    },
-    {
-      id: 2,
-      name: "Luxury Room",
-      size: "50M²",
-      maxPeople: 4,
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      price: "$289",
-      image: "https://via.placeholder.com/400", // Replace with actual image URL
-    },
-    {
-      id: 3,
-      name: "Luxury Suite Room",
-      size: "90M²",
-      maxPeople: 5,
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      price: "$320",
-      image: "https://via.placeholder.com/400", // Replace with actual image URL
-    },
+  const fetchRoomCategory = async () => {
+    try {
+      setFetchLoding(true);
+      const res = await fetch(`/api/roomcategory/getroomcategories`);
+      const data = await res.json();
+      if (res.ok) {
+        setRoomCategory(data.roomcategories);
+        setFetchLoding(false);
+      }
+    } catch (error) {
+      console.log(error.message);
+      setFetchLoding(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoomCategory();
+  }, []);
+
+  const rooms = [
+    
   ];
   return (
     <div className="relative">
@@ -172,22 +140,23 @@ export default function Home() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {rooms.map((room) => (
+            {roomCategory.map((room) => (
               <Card
                 key={room.id}
-                imgSrc={room1}
+                imgSrc={`http://localhost:3001/uploads/${room.image}`}
                 className="overflow-hidden shadow-lg rounded-lg "
                 // image with 600px and high 400px
               >
-                <div className="flex items-center justify-between text-gray-600 text-sm mb-2">
-                  <span>Size: {room.size}</span>
-                  <span>Max People: {room.maxPeople}</span>
+                <h3 className="text-2xl font-semibold mb-2">
+                  {room.category_name}
+                </h3>
+                <p className="text-gray-600 mb-1">{room.description}</p>
+                <div className="flex items-center justify-between text-gray-600 text-lg mb-2">
+                  <span>
+                    <b>Rs {room.price}.00</b>{" "}
+                  </span>
                 </div>
-                <h3 className="text-2xl font-semibold mb-2">{room.name}</h3>
-                <p className="text-gray-600 mb-4">{room.description}</p>
-                <Button className="bg-customBlue">
-                  Book Now from {room.price}
-                </Button>
+                <Button className="bg-customBlue">Book Now</Button>
               </Card>
             ))}
           </div>
