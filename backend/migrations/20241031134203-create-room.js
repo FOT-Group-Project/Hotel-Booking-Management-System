@@ -21,6 +21,10 @@ module.exports = {
       availability: {
         type: Sequelize.BOOLEAN,
       },
+      status: {
+        type: Sequelize.ENUM("available", "occupied", "maintenance"),
+        defaultValue: "available",
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -36,6 +40,10 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
+    // Drop the status ENUM type before dropping the table to avoid ENUM type conflicts
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_Rooms_status";'
+    );
     await queryInterface.dropTable("Rooms");
   },
 };

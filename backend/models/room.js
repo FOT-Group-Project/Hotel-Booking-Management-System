@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Room extends Model {
     /**
@@ -19,6 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       category_id: DataTypes.INTEGER,
       user_id: DataTypes.INTEGER,
       availability: DataTypes.BOOLEAN,
+      status: {
+        type: DataTypes.ENUM,
+        values: ["available", "occupied", "maintenance"],
+        defaultValue: "available", // Default to available when a new room is created
+      },
     },
     {
       sequelize,
