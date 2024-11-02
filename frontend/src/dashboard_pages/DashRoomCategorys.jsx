@@ -589,7 +589,7 @@ export default function DashRoomCategorys() {
                                 {roomCategory.category_name}
                                 <br />
                                 <b>Price : </b>
-                                {roomCategory.price}
+                                Rs. {roomCategory.price}.00
                               </TableCell>
 
                               <TableCell>{roomCategory.description}</TableCell>
