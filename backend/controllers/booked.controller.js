@@ -107,8 +107,28 @@ function getAllDetailsChecked(req, res) {
     });
 }
 
+// Get all CheckedOut table data using view
+function getAllDetailsCheckedOut(req, res) {
+  models.sequelize
+    .query("SELECT * FROM CheckedOutDetails WHERE status = 1")
+    .then((result) => {
+      res.status(200).json({
+        success: true,
+        message: "Checked out data fetched successfully",
+        data: result[0],
+      });
+    })
+    .catch((err) => {
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    });
+}
+
 module.exports = {
   checkIn: checkIn,
   checkOut: checkOut,
   getAllDetailsChecked: getAllDetailsChecked,
+  getAllDetailsCheckedOut: getAllDetailsCheckedOut,
 };
