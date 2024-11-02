@@ -76,6 +76,16 @@ export default function DashBooked() {
     }).format(new Date(date));
   };
 
+  const calculateDaysBetween = (date_in, date_out) => {
+    const startDate = new Date(date_in);
+    const endDate = new Date(date_out);
+
+    const differenceInTime = endDate - startDate;
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+
+    return differenceInDays;
+  };
+
   const fetchBookedDetails = async () => {
     try {
       setFetchLoding(true);
@@ -141,6 +151,7 @@ export default function DashBooked() {
                       <TableHeadCell>room name</TableHeadCell>
                       <TableHeadCell>Check In Date</TableHeadCell>
                       <TableHeadCell>Check Out Date</TableHeadCell>
+                      <TableHeadCell>No of Days</TableHeadCell>
                       <TableHeadCell>Status</TableHeadCell>
                     </TableHead>
                     {currentData.map((bookedDetails) => (
@@ -155,6 +166,13 @@ export default function DashBooked() {
                           </TableCell>
                           <TableCell>
                             {formatDate(bookedDetails.date_out)}
+                          </TableCell>
+                          <TableCell>
+                            {calculateDaysBetween(
+                              bookedDetails.date_in,
+                              bookedDetails.date_out
+                            )}{" "}
+                            days
                           </TableCell>
 
                           <TableCell>
