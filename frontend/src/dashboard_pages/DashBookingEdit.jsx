@@ -251,7 +251,7 @@ export default function DashBookingEdit() {
 
               <Modal.Body>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                  <div className="flex gap-8">
+                  <div className="flex gap-10">
                     <div className="flex flex-col gap-4">
                       <h1 className="text-left font-semibold text-lg">
                         Enter new details
@@ -268,16 +268,15 @@ export default function DashBookingEdit() {
                               new_room_id: e.target.value,
                             });
                           }}
+                          value={formData.new_room_id}
                         >
                           <option value="">Select Room</option>
 
-                          {room
-                            .filter((room) => room.status === "available") // Filter rooms by status
-                            .map((room) => (
-                              <option key={room.id} value={room.id}>
-                                {room.room_name + " - " + room.category_name}
-                              </option>
-                            ))}
+                          {room.map((room) => (
+                            <option key={room.id} value={room.id}>
+                              {room.room_name} - {room.category_name}
+                            </option>
+                          ))}
                         </Select>
                       </div>
 
@@ -341,7 +340,10 @@ export default function DashBookingEdit() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-5">
+                      <h1 className="text-left font-semibold text-lg">
+                        Current booking details
+                      </h1>
                       <div>
                         <Label value="Reference No : " />
                         {bookedCheckOut.ref_no}

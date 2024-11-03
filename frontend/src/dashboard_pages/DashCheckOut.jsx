@@ -314,7 +314,7 @@ export default function DashCheckOut() {
                       <TableHeadCell>Ref No</TableHeadCell>
                       <TableHeadCell>name</TableHeadCell>
                       <TableHeadCell>contact no</TableHeadCell>
-                      <TableHeadCell>room name</TableHeadCell>
+                      <TableHeadCell>room</TableHeadCell>
                       <TableHeadCell>Check In Date</TableHeadCell>
                       <TableHeadCell>Check Out Date</TableHeadCell>
                       <TableHeadCell>No of Days</TableHeadCell>
@@ -386,7 +386,8 @@ export default function DashCheckOut() {
                               }}
                               className="bg-customBlue"
                             >
-                              <FaSignOutAlt />
+                              <FaSignOutAlt className="h-5 w-4 mr-2" /> Check
+                              Out
                             </Button>
                           </TableCell>
                         </TableRow>
