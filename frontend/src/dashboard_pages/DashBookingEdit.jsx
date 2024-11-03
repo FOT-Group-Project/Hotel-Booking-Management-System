@@ -22,6 +22,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { React, useEffect, useRef, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { FaSignOutAlt, FaWindowClose } from "react-icons/fa";
+import { MdEditSquare } from "react-icons/md";
 import { FaSignInAlt } from "react-icons/fa";
 import "react-circular-progressbar/dist/styles.css";
 import { FaUserEdit } from "react-icons/fa";
@@ -37,7 +38,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-export default function DashBookingCancel() {
+export default function DashBookingEdit() {
   const { currentUser } = useSelector((state) => state.user);
   const [bookedDetails, setBookedDetails] = useState([]);
 
@@ -127,6 +128,21 @@ export default function DashBookingCancel() {
     }
   };
 
+  const fetchRoom = async () => {
+    try {
+      setFetchLoding(true);
+      const res = await fetch(`/api/room/getroom-all-details`);
+      const data = await res.json();
+      if (res.ok) {
+        setRoom(data.rooms);
+        setFetchLoding(false);
+      }
+    } catch (error) {
+      console.log(error.message);
+      setFetchLoding(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -169,6 +185,7 @@ export default function DashBookingCancel() {
 
   useEffect(() => {
     fetchBookedDetails();
+    fetchRoom();
   }, []);
 
   return (
@@ -186,10 +203,10 @@ export default function DashBookingCancel() {
                 Home
               </Breadcrumb.Item>
             </Link>
-            <Breadcrumb.Item>Cancel</Breadcrumb.Item>
+            <Breadcrumb.Item>Edit</Breadcrumb.Item>
           </Breadcrumb>
 
-          <Modal show={openModal} onClose={() => setOpenModal(false)} size="md">
+          <Modal show={openModal} onClose={() => setOpenModal(false)}>
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -197,97 +214,178 @@ export default function DashBookingCancel() {
               transition={{ duration: 0.3 }}
             >
               <Modal.Header>
-                <h1 className="text-xl font-semibold">Cancel Room Booking</h1>
+                <h1 className="text-xl font-semibold">Edit Room Booking</h1>
               </Modal.Header>
 
               <Modal.Body>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                  <div>
-                    <Label value="Reference No : " />
-                    {bookedCheckOut.ref_no}
-                  </div>
+                  <div className="flex gap-8">
+                    <div className="flex flex-col gap-4">
+                      <h1 className="text-left font-semibold text-lg">
+                        Enter new details
+                      </h1>
 
-                  <div>
-                    <Label value="Name : " />
-                    {bookedCheckOut.name}
-                  </div>
+                      <div>
+                        <Label value="Select New Room" />
+                        <Select
+                          id="room_id"
+                          required
+                          onChange={(e) => {
+                            setBookedCheckOut({
+                              ...bookedCheckOut,
+                              room_id: e.target.value,
+                            });
+                          }}
+                        >
+                          <option value="">Select Room</option>
 
-                  <div>
-                    <Label value="Contact No : " />
-                    {bookedCheckOut.contact_no}
-                  </div>
+                          {room
+                            .filter((room) => room.status === "available") // Filter rooms by status
+                            .map((room) => (
+                              <option key={room.id} value={room.id}>
+                                {room.room_name + " - " + room.category_name}
+                              </option>
+                            ))}
+                        </Select>
+                      </div>
+                      <div>
+                        <Label value="Contact No" />
+                        <TextInput
+                          id="contact_no"
+                          type="number"
+                          required
+                          shadow
+                          onChange={(e) => handleChange(e)}
+                          placeholder="0712345678"
+                        />
+                      </div>
 
-                  <div>
-                    <Label value="Room Name : " />
-                    {bookedCheckOut.room_name}
-                  </div>
+                      <div>
+                        <Label value="Check In Date & Time" />
+                        <TextInput
+                          id="check_in_date"
+                          type="datetime-local"
+                          required
+                          shadow
+                          onChange={(e) => {
+                            const formattedDate = e.target.value; // This will be in 'YYYY-MM-DD'
+                            setFormData({
+                              ...formData,
+                              check_in_date: formattedDate,
+                            });
+                          }}
+                        />
+                      </div>
 
-                  <div>
-                    <Label value="Check In Date : " />
-                    {formatDate(bookedCheckOut.date_in)}
-                  </div>
+                      <div>
+                        <Label value="Check Out Date & Time" />
+                        <TextInput
+                          id="check_out_date"
+                          type="datetime-local"
+                          required
+                          shadow
+                          onChange={(e) => {
+                            const formattedDate = e.target.value; // This will be in 'YYYY-MM-DD'
+                            setFormData({
+                              ...formData,
+                              check_out_date: formattedDate,
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
 
-                  <div>
-                    <Label value="Check Out Date : " />
-                    {formatDate(bookedCheckOut.date_out)}
-                  </div>
+                    <div className="flex flex-col gap-2">
+                      <div>
+                        <Label value="Reference No : " />
+                        {bookedCheckOut.ref_no}
+                      </div>
 
-                  <div>
-                    <Label value="No of Days : " />
-                    {calculateDaysBetween(
-                      bookedCheckOut.date_in,
-                      bookedCheckOut.date_out
-                    )}{" "}
-                    days
-                  </div>
+                      <div>
+                        <Label value="Name : " />
+                        {bookedCheckOut.name}
+                      </div>
 
-                  <div>
-                    <Label value="Total Price : " />
-                    <b>Rs. {bookedCheckOut.total_price}</b>
-                  </div>
+                      <div>
+                        <Label value="Contact No : " />
+                        {bookedCheckOut.contact_no}
+                      </div>
 
-                  <div className="flex gap-2">
-                    <Label value="Status : " />
+                      <div>
+                        <Label value="Room Name : " />
+                        {bookedCheckOut.room_name}
+                      </div>
 
-                    <div className="w-28">
-                      {bookedCheckOut.status_description === "Checked Out" ? (
-                        <Badge color="success" size="lg">
-                          Checked Out
-                        </Badge>
-                      ) : bookedCheckOut.status_description === "Checked In" ? (
-                        <Badge color="warning" size="lg">
-                          Checked In
-                        </Badge>
-                      ) : bookedCheckOut.status_description === "Canceled" ? (
-                        <Badge color="info" size="lg">
-                          Canceled
-                        </Badge>
-                      ) : (
-                        <Badge color="warning" size="lg">
-                          Pending
-                        </Badge>
-                      )}
+                      <div>
+                        <Label value="Check In Date : " />
+                        {formatDate(bookedCheckOut.date_in)}
+                      </div>
+
+                      <div>
+                        <Label value="Check Out Date : " />
+                        {formatDate(bookedCheckOut.date_out)}
+                      </div>
+
+                      <div>
+                        <Label value="No of Days : " />
+                        {calculateDaysBetween(
+                          bookedCheckOut.date_in,
+                          bookedCheckOut.date_out
+                        )}{" "}
+                        days
+                      </div>
+
+                      <div>
+                        <Label value="Total Price : " />
+                        <b>Rs. {bookedCheckOut.total_price}</b>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Label value="Status : " />
+
+                        <div className="w-28">
+                          {bookedCheckOut.status_description ===
+                          "Checked Out" ? (
+                            <Badge color="success" size="lg">
+                              Checked Out
+                            </Badge>
+                          ) : bookedCheckOut.status_description ===
+                            "Checked In" ? (
+                            <Badge color="warning" size="lg">
+                              Checked In
+                            </Badge>
+                          ) : bookedCheckOut.status_description ===
+                            "Canceled" ? (
+                            <Badge color="info" size="lg">
+                              Canceled
+                            </Badge>
+                          ) : (
+                            <Badge color="warning" size="lg">
+                              Pending
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
-
                   <div className="flex gap-2 justify-end">
                     <Button color="red" onClick={() => setOpenModal(false)}>
                       Close
                     </Button>
                     <Button
-                      className="bg-red-700"
+                      className="bg-green-700"
                       type="submit"
                       disabled={createLoding}
                     >
                       {createLoding ? (
                         <>
                           <Spinner size="sm" />
-                          <span className="pl-3">Canceling...</span>
+                          <span className="pl-3">Editing...</span>
                         </>
                       ) : (
                         <>
-                          <FaWindowClose className="mr-2 mt-1" />
-                          <span>Cancel Booking</span>
+                          <MdEditSquare className="mr-2 mt-1" />
+                          <span>Edit Booking</span>
                         </>
                       )}
                     </Button>
@@ -377,10 +475,10 @@ export default function DashBookingCancel() {
                                 setBookedCheckOut(bookedDetails);
                                 setOpenModal(true);
                               }}
-                              className="bg-red-700"
+                              className="bg-green-700"
                             >
-                              <FaWindowClose className="mr-2 mt-1" />
-                              Cancel
+                              <MdEditSquare className="mr-2 mt-1" />
+                              Edit
                             </Button>
                           </TableCell>
                         </TableRow>
