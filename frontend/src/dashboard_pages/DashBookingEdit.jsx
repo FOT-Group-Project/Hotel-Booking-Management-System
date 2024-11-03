@@ -106,6 +106,17 @@ export default function DashBookingEdit() {
     return (differenceInTime / (1000 * 3600 * 24)).toFixed(0);
   };
 
+  const formatDateTimeLocal = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    const hours = String(d.getHours()).padStart(2, "0");
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   const fetchBookedDetails = async () => {
     try {
       setFetchLoding(true);
@@ -197,6 +208,18 @@ export default function DashBookingEdit() {
     fetchRoom();
   }, []);
 
+  useEffect(() => {
+    if (openModal && bookedCheckOut) {
+      setFormData({
+        new_room_id: bookedCheckOut.new_room_id || "",
+        name: bookedCheckOut.name || "",
+        contact_no: bookedCheckOut.contact_no || "",
+        date_in: formatDateTimeLocal(bookedCheckOut.date_in),
+        date_out: formatDateTimeLocal(bookedCheckOut.date_out),
+      });
+    }
+  }, [openModal, bookedCheckOut]);
+
   return (
     <div className="p-3 w-full">
       <AnimatePresence>
@@ -267,6 +290,7 @@ export default function DashBookingEdit() {
                           shadow
                           onChange={(e) => handleChange(e)}
                           placeholder="Nimali Ireshika"
+                          defaultValue={bookedCheckOut.name}
                         />
                       </div>
                       <div>
@@ -278,6 +302,7 @@ export default function DashBookingEdit() {
                           shadow
                           onChange={(e) => handleChange(e)}
                           placeholder="0712345678"
+                          defaultValue={bookedCheckOut.contact_no}
                         />
                       </div>
 
@@ -288,13 +313,13 @@ export default function DashBookingEdit() {
                           type="datetime-local"
                           required
                           shadow
-                          onChange={(e) => {
-                            const formattedDate = e.target.value; // This will be in 'YYYY-MM-DD'
+                          value={formData.date_in}
+                          onChange={(e) =>
                             setFormData({
                               ...formData,
-                              date_in: formattedDate,
-                            });
-                          }}
+                              date_in: e.target.value,
+                            })
+                          }
                         />
                       </div>
 
@@ -305,13 +330,13 @@ export default function DashBookingEdit() {
                           type="datetime-local"
                           required
                           shadow
-                          onChange={(e) => {
-                            const formattedDate = e.target.value; // This will be in 'YYYY-MM-DD'
+                          value={formData.date_out}
+                          onChange={(e) =>
                             setFormData({
                               ...formData,
-                              date_out: formattedDate,
-                            });
-                          }}
+                              date_out: e.target.value,
+                            })
+                          }
                         />
                       </div>
                     </div>
