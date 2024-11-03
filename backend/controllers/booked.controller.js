@@ -88,6 +88,30 @@ function checkOut(req, res) {
     });
 }
 
+// Cancel a check-in using stored procedure
+async function cancelCheckIn(req, res) {
+  const { ref_no, room_id } = req.body;
+
+  try {
+    await models.sequelize.query(
+      "CALL CancelCheckInProcedure(:ref_no, :room_id)",
+      {
+        replacements: { ref_no, room_id },
+      }
+    );
+    res.status(200).json({
+      success: true,
+      message: `Check-in canceled successfully for reference number ${ref_no}.`,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message:
+        error.message || "An error occurred while canceling the check-in.",
+    });
+  }
+}
+
 // Get all Checked table data using view
 function getAllDetailsChecked(req, res) {
   models.sequelize
@@ -129,6 +153,7 @@ function getAllDetailsCheckedOut(req, res) {
 module.exports = {
   checkIn: checkIn,
   checkOut: checkOut,
+  cancelCheckIn: cancelCheckIn,
   getAllDetailsChecked: getAllDetailsChecked,
   getAllDetailsCheckedOut: getAllDetailsCheckedOut,
 };

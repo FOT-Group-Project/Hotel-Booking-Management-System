@@ -192,7 +192,7 @@ export default function DashBooked() {
                               </Badge>
                             ) : bookedDetails.status_description ===
                               "Canceled" ? (
-                              <Badge color="info" size="lg">
+                              <Badge color="red" size="lg">
                                 Canceled
                               </Badge>
                             ) : (
