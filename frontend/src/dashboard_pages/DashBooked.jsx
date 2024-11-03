@@ -58,7 +58,7 @@ export default function DashBooked() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 9;
   const totalPages = Math.ceil(bookedDetails.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
@@ -76,6 +76,14 @@ export default function DashBooked() {
     }).format(new Date(date));
   };
 
+  const formatTime = (date) => {
+    return new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    }).format(new Date(date));
+  };
+
   const calculateDaysBetween = (date_in, date_out) => {
     const startDate = new Date(date_in);
     const endDate = new Date(date_out);
@@ -83,7 +91,7 @@ export default function DashBooked() {
     const differenceInTime = endDate - startDate;
     const differenceInDays = differenceInTime / (1000 * 3600 * 24);
 
-    return differenceInDays;
+    return differenceInDays.toFixed(0);
   };
 
   const fetchBookedDetails = async () => {
@@ -164,9 +172,15 @@ export default function DashBooked() {
                           <TableCell>{bookedDetails.room_name}</TableCell>
                           <TableCell>
                             {formatDate(bookedDetails.date_in)}
+                            {<br />}
+                            {"At : "}
+                            {formatTime(bookedDetails.date_in)}
                           </TableCell>
                           <TableCell>
                             {formatDate(bookedDetails.date_out)}
+                            {<br />}
+                            {"At : "}
+                            {formatTime(bookedDetails.date_out)}
                           </TableCell>
                           <TableCell>
                             {calculateDaysBetween(
@@ -192,7 +206,7 @@ export default function DashBooked() {
                               </Badge>
                             ) : bookedDetails.status_description ===
                               "Canceled" ? (
-                              <Badge color="info" size="lg">
+                              <Badge color="red" size="lg">
                                 Canceled
                               </Badge>
                             ) : (

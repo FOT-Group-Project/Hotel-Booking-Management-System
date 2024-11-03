@@ -21,7 +21,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { React, useEffect, useRef, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
-import { FaSignOutAlt } from "react-icons/fa";
+import { FaSignOutAlt, FaWindowClose } from "react-icons/fa";
 import { FaSignInAlt } from "react-icons/fa";
 import "react-circular-progressbar/dist/styles.css";
 import { FaUserEdit } from "react-icons/fa";
@@ -37,7 +37,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-export default function DashCheckOut() {
+export default function DashBookingCancel() {
   const { currentUser } = useSelector((state) => state.user);
   const [bookedDetails, setBookedDetails] = useState([]);
 
@@ -131,7 +131,7 @@ export default function DashCheckOut() {
     e.preventDefault();
     try {
       setCreateLoding(true);
-      const res = await fetch(`/api/booked/checkout`, {
+      const res = await fetch(`/api/booked/cancel`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -186,7 +186,7 @@ export default function DashCheckOut() {
                 Home
               </Breadcrumb.Item>
             </Link>
-            <Breadcrumb.Item>Check Out</Breadcrumb.Item>
+            <Breadcrumb.Item>Cancel</Breadcrumb.Item>
           </Breadcrumb>
 
           <Modal show={openModal} onClose={() => setOpenModal(false)} size="md">
@@ -197,7 +197,7 @@ export default function DashCheckOut() {
               transition={{ duration: 0.3 }}
             >
               <Modal.Header>
-                <h1 className="text-xl font-semibold">Check In Room</h1>
+                <h1 className="text-xl font-semibold">Cancel Room Booking</h1>
               </Modal.Header>
 
               <Modal.Body>
@@ -271,11 +271,11 @@ export default function DashCheckOut() {
                   </div>
 
                   <div className="flex gap-2 justify-end">
-                    <Button color="failure" onClick={() => setOpenModal(false)}>
+                    <Button color="red" onClick={() => setOpenModal(false)}>
                       Close
                     </Button>
                     <Button
-                      className="bg-customBlue"
+                      className="bg-red-700"
                       type="submit"
                       disabled={createLoding}
                     >
@@ -286,8 +286,8 @@ export default function DashCheckOut() {
                         </>
                       ) : (
                         <>
-                          <FaSignOutAlt className="mr-2 mt-1" />
-                          Check Out
+                          <FaWindowClose className="mr-2 mt-1" />
+                          <span>Cancel Booking</span>
                         </>
                       )}
                     </Button>
@@ -298,7 +298,7 @@ export default function DashCheckOut() {
           </Modal>
 
           <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
-            Check Out Room
+            Room Booking Cancel
           </h1>
 
           {fetchLoding ? (
@@ -317,7 +317,6 @@ export default function DashCheckOut() {
                       <TableHeadCell>room name</TableHeadCell>
                       <TableHeadCell>Check In Date</TableHeadCell>
                       <TableHeadCell>Check Out Date</TableHeadCell>
-                      <TableHeadCell>No of Days</TableHeadCell>
                       <TableHeadCell>Total Price</TableHeadCell>
                       <TableHeadCell>Status</TableHeadCell>
                       <TableHeadCell>
@@ -343,13 +342,7 @@ export default function DashCheckOut() {
                             {"At : "}
                             {formatTime(bookedDetails.date_out)}
                           </TableCell>
-                          <TableCell>
-                            {calculateDaysBetween(
-                              bookedDetails.date_in,
-                              bookedDetails.date_out
-                            )}{" "}
-                            days
-                          </TableCell>
+
                           <TableCell>
                             <b>Rs. {bookedDetails.total_price}</b>
                           </TableCell>
@@ -384,9 +377,10 @@ export default function DashCheckOut() {
                                 setBookedCheckOut(bookedDetails);
                                 setOpenModal(true);
                               }}
-                              className="bg-customBlue"
+                              className="bg-red-700"
                             >
-                              <FaSignOutAlt />
+                              <FaWindowClose className="mr-2 mt-1" />
+                              Cancel
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -411,7 +405,7 @@ export default function DashCheckOut() {
                 <div className="flex flex-col items-center justify-center h-96">
                   <HiInformationCircle className="text-4xl text-gray-400" />
                   <h1 className="text-xl font-semibold mt-3 text-gray-400">
-                    No any check-In to check-Out
+                    No any booking to cancel
                   </h1>
                 </div>
               )}
