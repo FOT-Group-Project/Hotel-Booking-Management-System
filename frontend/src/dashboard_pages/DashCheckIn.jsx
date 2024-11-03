@@ -228,10 +228,10 @@ export default function DashCheckIn() {
                 </div>
 
                 <div>
-                  <Label value="Check In Date" />
+                  <Label value="Check In Date & Time" />
                   <TextInput
                     id="check_in_date"
-                    type="date"
+                    type="datetime-local"
                     required
                     shadow
                     onChange={(e) => {
@@ -245,10 +245,10 @@ export default function DashCheckIn() {
                 </div>
 
                 <div>
-                  <Label value="Check Out Date" />
+                  <Label value="Check Out Date & Time" />
                   <TextInput
                     id="check_out_date"
-                    type="date"
+                    type="datetime-local"
                     required
                     shadow
                     onChange={(e) => {

@@ -121,7 +121,7 @@ export default function DashSidebar() {
 
           <Link to="/dashboard?tab=room-category">
             <Sidebar.Item
-              active={tab === "room-ategory" || !tab}
+              active={tab === "room-category" || !tab}
               icon={BiSolidCategory}
               as="div"
             >

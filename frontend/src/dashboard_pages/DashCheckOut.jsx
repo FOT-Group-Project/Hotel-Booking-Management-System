@@ -81,6 +81,19 @@ export default function DashCheckOut() {
     }
   };
 
+  const formatTime = (date) => {
+    if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
+    try {
+      return new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true, // This will display time in AM/PM format
+      }).format(new Date(date));
+    } catch {
+      return "Invalid Date";
+    }
+  };
+
   const calculateDaysBetween = (date_in, date_out) => {
     if (!date_in || !date_out) return "N/A";
     const startDate = new Date(date_in);
@@ -88,7 +101,7 @@ export default function DashCheckOut() {
     if (isNaN(startDate) || isNaN(endDate)) return "N/A";
 
     const differenceInTime = endDate - startDate;
-    return differenceInTime / (1000 * 3600 * 24);
+    return (differenceInTime / (1000 * 3600 * 24)).toFixed(0);
   };
 
   const fetchBookedDetails = async () => {
@@ -320,9 +333,15 @@ export default function DashCheckOut() {
                           <TableCell>{bookedDetails.room_name}</TableCell>
                           <TableCell>
                             {formatDate(bookedDetails.date_in)}
+                            {<br />}
+                            {"At : "}
+                            {formatTime(bookedDetails.date_in)}
                           </TableCell>
                           <TableCell>
                             {formatDate(bookedDetails.date_out)}
+                            {<br />}
+                            {"At : "}
+                            {formatTime(bookedDetails.date_out)}
                           </TableCell>
                           <TableCell>
                             {calculateDaysBetween(
@@ -392,7 +411,7 @@ export default function DashCheckOut() {
                 <div className="flex flex-col items-center justify-center h-96">
                   <HiInformationCircle className="text-4xl text-gray-400" />
                   <h1 className="text-xl font-semibold mt-3 text-gray-400">
-                    No data found
+                    No any check-In to check-Out
                   </h1>
                 </div>
               )}
