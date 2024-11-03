@@ -10,6 +10,7 @@ import DashRoomCategorys from "../dashboard_pages/DashRoomCategorys";
 import DashCheckIn from "../dashboard_pages/DashCheckIn";
 import DashCheckOut from "../dashboard_pages/DashCheckOut";
 import DashBooked from "../dashboard_pages/DashBooked";
+import DashBookingCancel from "../dashboard_pages/DashBookingCancel";
 
 export default function Dashboard() {
   const loaction = useLocation();
@@ -46,6 +47,8 @@ export default function Dashboard() {
       {tab === "check-out" && <DashCheckOut />}
       {/* booked */}
       {tab === "booked" && <DashBooked />}
+      {/* booking cancel */}
+      {tab === "booking-cancel" && <DashBookingCancel />}
     </div>
   );
 }

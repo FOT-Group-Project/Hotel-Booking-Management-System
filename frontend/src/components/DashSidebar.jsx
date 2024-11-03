@@ -10,8 +10,8 @@ import {
 import { FaUsers, FaPowerOff } from "react-icons/fa";
 import { RiHotelFill } from "react-icons/ri";
 import { FaBed } from "react-icons/fa6";
-import { FaSignOutAlt } from "react-icons/fa";
-import { FaSignInAlt } from "react-icons/fa";
+
+import { FaSignInAlt, FaWindowClose, FaSignOutAlt } from "react-icons/fa";
 import { MdBedroomParent } from "react-icons/md";
 import { BiSolidCategory } from "react-icons/bi";
 import { IoIosMan } from "react-icons/io";
@@ -90,6 +90,16 @@ export default function DashSidebar() {
               as="div"
             >
               Check Out
+            </Sidebar.Item>
+          </Link>
+
+          <Link to="/dashboard?tab=booking-cancel">
+            <Sidebar.Item
+              active={tab === "booking-cancel" || !tab}
+              icon={FaWindowClose}
+              as="div"
+            >
+              Booking Cancel
             </Sidebar.Item>
           </Link>
 
