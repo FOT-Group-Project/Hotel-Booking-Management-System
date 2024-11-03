@@ -6,6 +6,7 @@ const router = express.Router();
 router.post("/checkin", bookedController.checkIn);
 router.post("/checkout", bookedController.checkOut);
 router.post("/cancel", bookedController.cancelCheckIn);
+router.post("/edit-checkin", bookedController.editCheckIn);
 router.get("/checked-details", bookedController.getAllDetailsChecked);
 router.get("/checked-out-details", bookedController.getAllDetailsCheckedOut);
 
