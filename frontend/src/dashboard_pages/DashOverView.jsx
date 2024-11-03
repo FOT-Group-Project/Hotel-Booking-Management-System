@@ -1,4 +1,4 @@
-import { Alert, Breadcrumb, Button } from "flowbite-react";
+import { Alert, Breadcrumb } from "flowbite-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { React, useEffect, useState } from "react";
 import { FaBed, FaUsers, FaDollarSign } from "react-icons/fa";
@@ -6,37 +6,39 @@ import { HiHome } from "react-icons/hi";
 import { Link } from "react-router-dom";
 
 export default function DashOverView() {
-  const [bookedDetails, setBookedDetails] = useState([]);
-  const [fetchLoding, setFetchLoding] = useState(false);
+  const [fetchData, setFetchData] = useState(null); // Changed to null initially
+  const [fetchLoading, setFetchLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
-  // Fetch booked details
-  const fetchBookedDetails = async () => {
+  // Fetch details
+  const fetchOverViewDetails = async () => {
+    setFetchLoading(true);
     try {
-      setFetchLoding(true);
-      const res = await fetch(`/api/booked/checked-details`);
-      const data = await res.json();
-      if (res.ok) {
-        setBookedDetails(data.data);
+      const response = await fetch("/api/details/details-overview");
+      const data = await response.json();
+
+      if (data.success) {
+        setFetchData(data.data); // Set the data directly
       } else {
+        setAlertMessage(
+          data.error || "An error occurred while fetching details."
+        );
         setShowAlert(true);
-        setAlertMessage(data.message);
-        setTimeout(() => {
-          setShowAlert(false);
-          setAlertMessage("");
-        }, 10000);
       }
     } catch (error) {
-      console.log(error.message);
-    } finally {
-      setFetchLoding(false);
+      setAlertMessage("An error occurred while fetching details.");
+      setShowAlert(true);
     }
+    setFetchLoading(false);
   };
 
   useEffect(() => {
-    fetchBookedDetails();
+    fetchOverViewDetails();
   }, []);
+
+  // Ensure that fetchData has a valid structure before rendering
+  const overviewData = fetchData && fetchData.length > 0 ? fetchData[0] : null;
 
   return (
     <div className="p-3 w-full">
@@ -77,8 +79,12 @@ export default function DashOverView() {
                   <p className="text-gray-500">Available Rooms</p>
                 </div>
                 <div>
-                  <p className="text-xl font-semibold">20</p>
-                  <p className="text-gray-500">10</p>
+                  <p className="text-xl font-semibold">
+                    {overviewData ? overviewData.Total_Rooms : "Loading..."}
+                  </p>
+                  <p className="text-gray-500">
+                    {overviewData ? overviewData.Available_Rooms : "Loading..."}
+                  </p>
                 </div>
               </div>
             </div>
@@ -94,8 +100,14 @@ export default function DashOverView() {
                   <p className="text-gray-500">Active Customers</p>
                 </div>
                 <div>
-                  <p className="text-xl font-semibold">20</p>
-                  <p className="text-gray-500">10</p>
+                  <p className="text-xl font-semibold">
+                    {overviewData ? overviewData.Total_Customers : "Loading..."}
+                  </p>
+                  <p className="text-gray-500">
+                    {overviewData
+                      ? overviewData.Active_Customers
+                      : "Loading..."}
+                  </p>
                 </div>
               </div>
             </div>
@@ -111,8 +123,14 @@ export default function DashOverView() {
                   <p className="text-gray-500">Monthly Revenue</p>
                 </div>
                 <div>
-                  <p className="text-xl font-semibold">$5,000</p>
-                  <p className="text-gray-500">$1,500</p>
+                  <p className="text-xl font-semibold">
+                    Rs.{" "}
+                    {overviewData ? overviewData.Total_Revenue : "Loading..."}
+                  </p>
+                  <p className="text-gray-500">
+                    Rs.{" "}
+                    {overviewData ? overviewData.Monthly_Revenue : "Loading..."}
+                  </p>
                 </div>
               </div>
             </div>
