@@ -43,9 +43,10 @@ export default function DashBookingEdit() {
   const [bookedDetails, setBookedDetails] = useState([]);
 
   const [formData, setFormData] = useState({
-    room_name: "",
-    category_id: "",
-    availability: "",
+    new_room_id: "",
+    contact_no: "",
+    date_in: "",
+    date_out: "",
   });
   const [room, setRoom] = useState([]);
   const [customer, setCustomer] = useState([]);
@@ -147,14 +148,18 @@ export default function DashBookingEdit() {
     e.preventDefault();
     try {
       setCreateLoding(true);
-      const res = await fetch(`/api/booked/cancel`, {
+      const res = await fetch(`/api/booked/edit-checkin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ref_no: bookedCheckOut.ref_no,
-          room_id: bookedCheckOut.room_id,
+          new_room_id: formData.new_room_id,
+          name: formData.name,
+          contact_no: formData.contact_no,
+          date_in: formData.date_in,
+          date_out: formData.date_out,
         }),
       });
       const data = await res.json();
@@ -181,6 +186,10 @@ export default function DashBookingEdit() {
       console.log(error.message);
       setCreateLoding(false);
     }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
   useEffect(() => {
@@ -228,12 +237,12 @@ export default function DashBookingEdit() {
                       <div>
                         <Label value="Select New Room" />
                         <Select
-                          id="room_id"
+                          id="new_room_id"
                           required
                           onChange={(e) => {
-                            setBookedCheckOut({
-                              ...bookedCheckOut,
-                              room_id: e.target.value,
+                            setFormData({
+                              ...formData,
+                              new_room_id: e.target.value,
                             });
                           }}
                         >
@@ -247,6 +256,18 @@ export default function DashBookingEdit() {
                               </option>
                             ))}
                         </Select>
+                      </div>
+
+                      <div>
+                        <Label value="Name" />
+                        <TextInput
+                          id="name"
+                          type="text"
+                          required
+                          shadow
+                          onChange={(e) => handleChange(e)}
+                          placeholder="Nimali Ireshika"
+                        />
                       </div>
                       <div>
                         <Label value="Contact No" />
@@ -263,7 +284,7 @@ export default function DashBookingEdit() {
                       <div>
                         <Label value="Check In Date & Time" />
                         <TextInput
-                          id="check_in_date"
+                          id="date_in"
                           type="datetime-local"
                           required
                           shadow
@@ -271,7 +292,7 @@ export default function DashBookingEdit() {
                             const formattedDate = e.target.value; // This will be in 'YYYY-MM-DD'
                             setFormData({
                               ...formData,
-                              check_in_date: formattedDate,
+                              date_in: formattedDate,
                             });
                           }}
                         />
@@ -280,7 +301,7 @@ export default function DashBookingEdit() {
                       <div>
                         <Label value="Check Out Date & Time" />
                         <TextInput
-                          id="check_out_date"
+                          id="date_out"
                           type="datetime-local"
                           required
                           shadow
@@ -288,7 +309,7 @@ export default function DashBookingEdit() {
                             const formattedDate = e.target.value; // This will be in 'YYYY-MM-DD'
                             setFormData({
                               ...formData,
-                              check_out_date: formattedDate,
+                              date_out: formattedDate,
                             });
                           }}
                         />

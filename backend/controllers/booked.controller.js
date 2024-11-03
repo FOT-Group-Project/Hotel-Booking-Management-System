@@ -114,23 +114,17 @@ async function cancelCheckIn(req, res) {
 
 // Edit check-in details using stored procedure
 async function editCheckIn(req, res) {
-  const { ref_no, room_id, new_room_id, contact_no, date_in, date_out } =
-    req.body;
+  const { ref_no, new_room_id, name, contact_no, date_in, date_out } = req.body;
 
   try {
-    if (!ref_no || !room_id || !contact_no || !date_in || !date_out) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields are required." });
-    }
-
-    const result = await models.sequelize.query(
-      "CALL EditCheckInProcedure(:ref_no, :room_id, :new_room_id, :contact_no, :date_in, :date_out)",
+    // Call the stored procedure with the necessary parameters
+    await models.sequelize.query(
+      "CALL EditCheckInProcedure(:ref_no, :new_room_id, :name, :contact_no, :date_in, :date_out)",
       {
         replacements: {
           ref_no,
-          room_id,
-          new_room_id: new_room_id,
+          new_room_id,
+          name,
           contact_no,
           date_in,
           date_out,
@@ -141,12 +135,11 @@ async function editCheckIn(req, res) {
     res.status(200).json({
       success: true,
       message: "Check-in details updated successfully.",
-      data: result,
     });
-  } catch (err) {
+  } catch (error) {
     res.status(400).json({
       success: false,
-      message: err.message,
+      message: error.message || "Failed to edit check-in details.",
     });
   }
 }
