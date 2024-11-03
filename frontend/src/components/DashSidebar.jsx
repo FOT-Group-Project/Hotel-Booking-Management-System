@@ -12,7 +12,7 @@ import { RiHotelFill } from "react-icons/ri";
 import { FaBed } from "react-icons/fa6";
 
 import { FaSignInAlt, FaWindowClose, FaSignOutAlt } from "react-icons/fa";
-import { MdBedroomParent } from "react-icons/md";
+import { MdBedroomParent, MdEditSquare } from "react-icons/md";
 import { BiSolidCategory } from "react-icons/bi";
 import { IoIosMan } from "react-icons/io";
 
@@ -90,6 +90,16 @@ export default function DashSidebar() {
               as="div"
             >
               Check Out
+            </Sidebar.Item>
+          </Link>
+
+          <Link to="/dashboard?tab=booking-edit">
+            <Sidebar.Item
+              active={tab === "booking-edit" || !tab}
+              icon={MdEditSquare}
+              as="div"
+            >
+              Booking Edit
             </Sidebar.Item>
           </Link>
 
