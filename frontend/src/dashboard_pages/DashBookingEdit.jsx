@@ -444,7 +444,7 @@ export default function DashBookingEdit() {
           </Modal>
 
           <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
-            Room Booking Cancel
+            Room Booking Edit
           </h1>
 
           {fetchLoding ? (
