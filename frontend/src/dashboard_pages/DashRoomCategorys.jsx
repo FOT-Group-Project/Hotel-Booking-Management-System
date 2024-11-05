@@ -378,6 +378,9 @@ export default function DashRoomCategorys() {
                   />
                 </div>
                 <div className="flex gap-2 justify-end">
+                  <Button color="red" onClick={() => setOpenModalEdit(false)}>
+                    Close
+                  </Button>
                   <Button
                     className="bg-customBlue"
                     type="submit"
