@@ -68,7 +68,7 @@ export default function Header() {
               </Dropdown.Item>
             </Link>
 
-            <Link to="/dashboard">
+            <Link to="/dashboard?tab=dash">
               <Dropdown.Item>
                 <span className="block text-sm">Dashboard</span>
               </Dropdown.Item>
