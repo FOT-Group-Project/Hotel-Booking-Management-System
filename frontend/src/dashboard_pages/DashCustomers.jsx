@@ -107,6 +107,7 @@ export default function DashCustomers() {
       });
       const data = await res.json();
       if (res.ok) {
+        setFormData({});
         fetchCustomer();
         setCreateLoding(false);
         setFormData({
@@ -339,6 +340,7 @@ export default function DashCustomers() {
                     required
                     shadow
                     onChange={handleChange}
+                    defaultValue={formData.p_name}
                   />
                 </div>
 
@@ -353,6 +355,7 @@ export default function DashCustomers() {
                     required
                     shadow
                     onChange={handleChange}
+                    defaultValue={formData.p_email}
                   />
                 </div>
 
@@ -367,6 +370,7 @@ export default function DashCustomers() {
                     required
                     shadow
                     onChange={handleChange}
+                    defaultValue={formData.p_contact_no}
                   />
                 </div>
 
