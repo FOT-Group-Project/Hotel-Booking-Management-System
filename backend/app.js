@@ -10,6 +10,7 @@ const roomRoutes = require("./routes/room.route");
 const roomCategoryRoutes = require("./routes/roomcategory.route");
 const bookedRoutes = require("./routes/booked.route");
 const detailsRoutes = require("./routes/details.route");
+const customerRoutes = require("./routes/customer.route");
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/api/room", roomRoutes);
 app.use("/api/roomcategory", roomCategoryRoutes);
 app.use("/api/booked", bookedRoutes);
 app.use("/api/details", detailsRoutes);
+app.use("/api/customer", customerRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
