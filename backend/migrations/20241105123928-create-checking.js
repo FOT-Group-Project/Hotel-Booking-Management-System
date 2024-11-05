@@ -2,39 +2,18 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Checkeds", {
+    await queryInterface.createTable("Checkings", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      ref_no: {
-        type: Sequelize.STRING,
-      },
-      room_id: {
-        type: Sequelize.INTEGER,
-      },
-      name: {
-        type: Sequelize.TEXT,
-      },
-      contact_no: {
-        type: Sequelize.STRING,
-      },
-      date_in: {
-        type: Sequelize.DATE,
-      },
-      date_out: {
-        type: Sequelize.DATE,
-      },
-      booked_cid: {
+      booking_id: {
         type: Sequelize.INTEGER,
       },
       status: {
-        type: Sequelize.TINYINT,
-      },
-      date_updated: {
-        type: Sequelize.DATE,
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -51,6 +30,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Checkeds");
+    await queryInterface.dropTable("Checkings");
   },
 };
