@@ -1,44 +1,23 @@
 {
   "development": {
-    "username": "hms_user",
-    "password": "123456",
+    "username": "root",
+    "password": "1234",
     "database": "hms_db",
-    "host": "localhost",
-    "dialect": "mssql",
-    "port": 1433,
-    "dialectOptions": {
-      "options": {
-        "encrypt": false,
-        "enableArithAbort": true
-      }
-    }
+    "host": "127.0.0.1",
+    "dialect": "mysql"
   },
   "test": {
-    "username": "hms_user",
-    "password": "123456",
+    "username": "root",
+    "password": "1234",
     "database": "hms_db",
-    "host": "localhost",
-    "dialect": "mssql",
-    "port": 1433,
-    "dialectOptions": {
-      "options": {
-        "encrypt": false,
-        "enableArithAbort": true
-      }
-    }
+    "host": "127.0.0.1",
+    "dialect": "mysql"
   },
   "production": {
-    "username": "hms_user",
-    "password": "123456",
+    "username": "root",
+    "password": "1234",
     "database": "hms_db",
-    "host": "localhost",
-    "dialect": "mssql",
-    "port": 1433,
-    "dialectOptions": {
-      "options": {
-        "encrypt": false,
-        "enableArithAbort": true
-      }
-    }
+    "host": "127.0.0.1",
+    "dialect": "mysql"
   }
 }
