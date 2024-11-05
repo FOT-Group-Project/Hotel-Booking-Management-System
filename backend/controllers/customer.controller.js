@@ -22,6 +22,13 @@ function getCustomers(req, res) {
 function createCustomer(req, res) {
   const { p_name, p_contact_no, p_email } = req.body;
 
+  if (!p_name || !p_contact_no || !p_email) {
+    return res.status(400).json({
+      success: false,
+      message: "Please fill in all fields",
+    });
+  }
+
   models.sequelize
     .query("CALL CreateCustomer(:p_name, :p_contact_no, :p_email)", {
       replacements: { p_name, p_contact_no, p_email },
