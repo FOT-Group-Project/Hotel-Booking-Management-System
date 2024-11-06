@@ -40,6 +40,7 @@ import { Link } from "react-router-dom";
 export default function DashBookingCancel() {
   const { currentUser } = useSelector((state) => state.user);
   const [bookedDetails, setBookedDetails] = useState([]);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
 
   const [formData, setFormData] = useState({
     room_name: "",
@@ -58,7 +59,7 @@ export default function DashBookingCancel() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 7;
   const totalPages = Math.ceil(bookedDetails.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
@@ -107,7 +108,7 @@ export default function DashBookingCancel() {
   const fetchBookedDetails = async () => {
     try {
       setFetchLoding(true);
-      const res = await fetch(`/api/booked/checked-out-details`);
+      const res = await fetch(`/api/booking/get-pending-details`);
       const data = await res.json();
       if (res.ok) {
         setBookedDetails(data.data);
@@ -129,17 +130,12 @@ export default function DashBookingCancel() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Canceling booking...");
+    console.log(selectedBookingId);
     try {
       setCreateLoding(true);
-      const res = await fetch(`/api/booked/cancel`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ref_no: bookedCheckOut.ref_no,
-          room_id: bookedCheckOut.room_id,
-        }),
+      const res = await fetch(`/api/booking/cancel/${selectedBookingId}`, {
+        method: "DELETE",
       });
       const data = await res.json();
       if (res.ok) {
@@ -154,6 +150,7 @@ export default function DashBookingCancel() {
         }, 10000);
       } else {
         setCreateLoding(false);
+        setOpenModal(false);
         setShowAlert(true);
         setAlertMessage(data.message);
         setTimeout(() => {
@@ -164,6 +161,7 @@ export default function DashBookingCancel() {
     } catch (error) {
       console.log(error.message);
       setCreateLoding(false);
+      setOpenModal(false);
     }
   };
 
@@ -204,17 +202,22 @@ export default function DashBookingCancel() {
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                   <div>
                     <Label value="Reference No : " />
-                    {bookedCheckOut.ref_no}
+                    {bookedCheckOut.reference_number}
                   </div>
 
                   <div>
                     <Label value="Name : " />
-                    {bookedCheckOut.name}
+                    {bookedCheckOut.customer_name}
+                  </div>
+
+                  <div>
+                    <Label value="Email : " />
+                    {bookedCheckOut.customer_email}
                   </div>
 
                   <div>
                     <Label value="Contact No : " />
-                    {bookedCheckOut.contact_no}
+                    {bookedCheckOut.customer_phone}
                   </div>
 
                   <div>
@@ -313,7 +316,7 @@ export default function DashBookingCancel() {
                     <TableHead>
                       <TableHeadCell>Ref No</TableHeadCell>
                       <TableHeadCell>name</TableHeadCell>
-                      <TableHeadCell>contact no</TableHeadCell>
+                      <TableHeadCell>Email & Phone</TableHeadCell>
                       <TableHeadCell>room name</TableHeadCell>
                       <TableHeadCell>Check In Date</TableHeadCell>
                       <TableHeadCell>Check Out Date</TableHeadCell>
@@ -326,10 +329,20 @@ export default function DashBookingCancel() {
                     {currentData.map((bookedDetails) => (
                       <Table.Body className="divide-y" key={bookedDetails.id}>
                         <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <TableCell>{bookedDetails.ref_no}</TableCell>
-                          <TableCell>{bookedDetails.name}</TableCell>
-                          <TableCell>{bookedDetails.contact_no}</TableCell>
-                          <TableCell>{bookedDetails.room_name}</TableCell>
+                          <TableCell>
+                            {bookedDetails.reference_number}
+                          </TableCell>
+                          <TableCell>{bookedDetails.customer_name}</TableCell>
+                          <TableCell>
+                            {bookedDetails.customer_email}
+                            <br />
+                            {bookedDetails.customer_phone}
+                          </TableCell>
+                          <TableCell>
+                            {bookedDetails.room_name}
+                            <br />
+                            {bookedDetails.room_category_name}
+                          </TableCell>
                           <TableCell>
                             {formatDate(bookedDetails.date_in)}
                             {<br />}
@@ -375,6 +388,7 @@ export default function DashBookingCancel() {
                               layout="outline"
                               onClick={() => {
                                 setBookedCheckOut(bookedDetails);
+                                setSelectedBookingId(bookedDetails.booking_id);
                                 setOpenModal(true);
                               }}
                               className="bg-red-700"

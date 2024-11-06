@@ -39,9 +39,10 @@ export default function DashRooms() {
   const { currentUser } = useSelector((state) => state.user);
 
   const [formData, setFormData] = useState({
+    id: "",
     room_name: "",
     category_id: "",
-    availability: "",
+    status: "",
   });
   const [roomCategory, setRoomCategory] = useState([]);
   const [room, setRoom] = useState([]);
@@ -88,7 +89,7 @@ export default function DashRooms() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 6;
   const totalPages = Math.ceil(room.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
@@ -135,7 +136,6 @@ export default function DashRooms() {
         body: JSON.stringify({
           room_name: formData.room_name,
           category_id: formData.category_id,
-          availability: formData.availability,
         }),
       });
 
@@ -144,9 +144,10 @@ export default function DashRooms() {
       if (res.ok) {
         fetchRoom(); // Refresh the list after creation
         setFormData({
+          id: "",
           room_name: "",
           category_id: "",
-          availability: "",
+          status: "",
         }); // Clear the form after creation
         setCreateLoding(false);
       } else {
@@ -194,9 +195,9 @@ export default function DashRooms() {
       setUpdateLoding(true);
 
       const formData = new FormData();
+      formData.append("id", editedCategory.id);
       formData.append("room_name", editedCategory.room_name);
       formData.append("category_id", editedCategory.category_id);
-      formData.append("availability", editedCategory.availability);
 
       if (editedCategory.image instanceof File) {
         formData.append("image", editedCategory.image);
@@ -259,7 +260,6 @@ export default function DashRooms() {
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
             >
-              <Modal.Header />
               <Modal.Body>
                 <div className="text-center">
                   <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
@@ -285,10 +285,11 @@ export default function DashRooms() {
           <Modal
             show={openModalEdit}
             onClose={() => setOpenModalEdit(false)}
-            popup
             size="md"
           >
-            <Modal.Header />
+            <Modal.Header>
+              <h1 className="text-xl font-semibold">Edit Room</h1>
+            </Modal.Header>
             <Modal.Body>
               <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
                 <div>
@@ -331,27 +332,10 @@ export default function DashRooms() {
                   </Select>
                 </div>
 
-                <div>
-                  <Label value="Availability" />
-                  <Select
-                    id="availability"
-                    required
-                    shadow
-                    onChange={(e) =>
-                      setEditedCategory({
-                        ...editedCategory,
-                        availability: e.target.value,
-                      })
-                    }
-                    value={editedCategory?.availability}
-                  >
-                    <option value="">Select Availability</option>
-                    <option value="1">Available</option>
-                    <option value="0">Unavailable</option>
-                  </Select>
-                </div>
-
                 <div className="flex gap-2 justify-end">
+                  <Button color="red" onClick={() => setOpenModalEdit(false)}>
+                    Close
+                  </Button>
                   <Button
                     className="bg-customBlue"
                     type="submit"
@@ -424,23 +408,6 @@ export default function DashRooms() {
                         {category.category_name}
                       </option>
                     ))}
-                  </Select>
-                </div>
-
-                <div>
-                  <div className="mb-2 block">
-                    <Label value="Availability" />
-                  </div>
-                  <Select
-                    id="availability"
-                    required
-                    shadow
-                    onChange={handleChange}
-                    value={formData.availability}
-                  >
-                    <option value="">Select Availability</option>
-                    <option value="1">Available</option>
-                    <option value="0">Unavailable</option>
                   </Select>
                 </div>
 
@@ -558,7 +525,11 @@ export default function DashRooms() {
                       </div>
                     </>
                   ) : (
-                    <p>You have no users yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-center text-gray-500 dark:text-gray-400">
+                        No Room Found
+                      </p>
+                    </div>
                   )}
                 </>
               )}

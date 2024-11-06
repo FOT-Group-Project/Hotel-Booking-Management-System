@@ -20,15 +20,13 @@ function getRooms(req, res) {
 
 // Create a new room using stored procedure
 function createRoom(req, res) {
-  const { room_name, category_id, availability } = req.body;
+  const { room_name, category_id } = req.body;
+  const status = "available";
 
   models.sequelize
-    .query(
-      "CALL CreateRoom(:room_name, :category_id, :availability)",
-      {
-        replacements: { room_name, category_id, availability },
-      }
-    )
+    .query("CALL CreateRoom(:room_name, :category_id, :status)", {
+      replacements: { room_name, category_id, status },
+    })
     .then((result) => {
       res.status(201).json({
         success: true,
@@ -46,15 +44,12 @@ function createRoom(req, res) {
 // Update room category using stored procedure
 function updateRoom(req, res) {
   const { id } = req.params;
-  const { room_name, category_id, availability } = req.body;
+  const { room_name, category_id, status } = req.body;
 
   models.sequelize
-    .query(
-      "CALL UpdateRoom(:id, :room_name, :category_id, :availability)",
-      {
-        replacements: { id, room_name, category_id, availability },
-      }
-    )
+    .query("CALL UpdateRoom(:id, :room_name, :category_id, :status)", {
+      replacements: { id, room_name, category_id, status },
+    })
     .then((result) => {
       res.status(200).json({
         success: true,
