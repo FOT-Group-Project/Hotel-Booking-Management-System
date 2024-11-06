@@ -18,7 +18,13 @@ module.exports = (sequelize, DataTypes) => {
       customer_id: DataTypes.INTEGER,
       date_in: DataTypes.DATE,
       date_out: DataTypes.DATE,
-      status: DataTypes.ENUM("pending", "confirmed", "cancelled"),
+      status: DataTypes.ENUM(
+        "pending",
+        "confirmed",
+        "cancelled",
+        "checked_in",
+        "checked_out"
+      ),
     },
     {
       sequelize,

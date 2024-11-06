@@ -58,7 +58,7 @@ export default function DashBooked() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+  const itemsPerPage = 8;
   const totalPages = Math.ceil(bookedDetails.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
@@ -97,7 +97,7 @@ export default function DashBooked() {
   const fetchBookedDetails = async () => {
     try {
       setFetchLoding(true);
-      const res = await fetch(`/api/booked/checked-details`);
+      const res = await fetch(`/api/booking/get-all-details`);
       const data = await res.json();
       if (res.ok) {
         setBookedDetails(data.data);
@@ -155,7 +155,7 @@ export default function DashBooked() {
                     <TableHead>
                       <TableHeadCell>Ref No</TableHeadCell>
                       <TableHeadCell>name</TableHeadCell>
-                      <TableHeadCell>contact no</TableHeadCell>
+                      <TableHeadCell>Email & Phone</TableHeadCell>
                       <TableHeadCell>room name</TableHeadCell>
                       <TableHeadCell>Check In Date</TableHeadCell>
                       <TableHeadCell>Check Out Date</TableHeadCell>
@@ -166,10 +166,20 @@ export default function DashBooked() {
                     {currentData.map((bookedDetails) => (
                       <Table.Body className="divide-y" key={bookedDetails.id}>
                         <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <TableCell>{bookedDetails.ref_no}</TableCell>
-                          <TableCell>{bookedDetails.name}</TableCell>
-                          <TableCell>{bookedDetails.contact_no}</TableCell>
-                          <TableCell>{bookedDetails.room_name}</TableCell>
+                          <TableCell>
+                            {bookedDetails.reference_number}
+                          </TableCell>
+                          <TableCell>{bookedDetails.customer_name}</TableCell>
+                          <TableCell>
+                            {bookedDetails.customer_email}
+                            <br />
+                            {bookedDetails.customer_phone}
+                          </TableCell>
+                          <TableCell>
+                            {bookedDetails.room_name}
+                            <br />
+                            {bookedDetails.room_category_name}
+                          </TableCell>
                           <TableCell>
                             {formatDate(bookedDetails.date_in)}
                             {<br />}
@@ -194,18 +204,15 @@ export default function DashBooked() {
                           </TableCell>
 
                           <TableCell>
-                            {bookedDetails.status_description ===
-                            "Checked Out" ? (
+                            {bookedDetails.booking_status === "confirmed" ? (
                               <Badge color="success" size="lg">
-                                Checked Out
+                                Confirmed
                               </Badge>
-                            ) : bookedDetails.status_description ===
-                              "Checked In" ? (
-                              <Badge color="warning" size="lg">
-                                Checked In
+                            ) : bookedDetails.booking_status === "cancelled" ? (
+                              <Badge color="failure" size="lg">
+                                Cancelled
                               </Badge>
-                            ) : bookedDetails.status_description ===
-                              "Canceled" ? (
+                            ) : bookedDetails.booking_status === "Canceled" ? (
                               <Badge color="red" size="lg">
                                 Canceled
                               </Badge>

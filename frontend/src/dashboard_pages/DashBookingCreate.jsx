@@ -347,11 +347,13 @@ export default function DashBookingCreate() {
                               <TableCell>
                                 {formatDate(bookingDetails.date_in)}
                                 <br />
+                                {"At : "}
                                 {formatTime(bookingDetails.date_in)}
                               </TableCell>
                               <TableCell>
                                 {formatDate(bookingDetails.date_out)}
                                 <br />
+                                {"At : "}
                                 {formatTime(bookingDetails.date_out)}
                               </TableCell>
                               <TableCell>
