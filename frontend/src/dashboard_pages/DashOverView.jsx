@@ -171,7 +171,7 @@ export default function DashOverView() {
             </Link>
           </Breadcrumb>
 
-          <h1 className="mt-3 mb-3 text-left font-semibold text-2xl ">
+          <h1 className="mt-3 mb-3 text-left font-semibold text-xl ">
             Hotel Overview
           </h1>
 
@@ -261,7 +261,7 @@ export default function DashOverView() {
             </div>
           </div>
 
-          <h1 className="mt-6 mb-3 text-left font-semibold text-xl">
+          <h1 className="mt-4 mb-3 text-left font-semibold text-xl">
             All Booking Details
           </h1>
 
