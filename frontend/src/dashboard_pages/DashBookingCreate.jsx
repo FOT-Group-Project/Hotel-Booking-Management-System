@@ -158,6 +158,8 @@ export default function DashBookingCreate() {
         fetchBookingDetails();
         setShowAlert(false);
         setAlertMessage("");
+        fetchCustomer();
+        fetchRoom();
       } else {
         setCreateLoding(false);
         setShowAlert(true);
