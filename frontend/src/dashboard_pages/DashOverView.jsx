@@ -176,7 +176,7 @@ export default function DashOverView() {
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg">
+            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 w-full rounded-lg shadow-lg border border-gray-200">
               <div className="flex justify-between">
                 <div className="">
                   <h3 className="text-gray-500 text-lg font-semibold ">
@@ -197,7 +197,7 @@ export default function DashOverView() {
               </div>
             </div>
 
-            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg">
+            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg border border-gray-200">
               <div className="flex justify-between">
                 <div className="">
                   <h3 className="text-gray-500 text-lg font-semibold ">
@@ -218,7 +218,7 @@ export default function DashOverView() {
               </div>
             </div>
 
-            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg">
+            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg border border-gray-200">
               <div className="flex justify-between">
                 <div className="">
                   <h3 className="text-gray-500 text-lg font-semibold ">
@@ -239,7 +239,7 @@ export default function DashOverView() {
               </div>
             </div>
 
-            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg">
+            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg border border-gray-200">
               <div className="flex justify-between">
                 <div className="">
                   <h3 className="text-gray-500 text-lg font-semibold ">
@@ -261,7 +261,7 @@ export default function DashOverView() {
             </div>
           </div>
 
-          <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
+          <h1 className="mt-6 mb-3 text-left font-semibold text-xl">
             All Booking Details
           </h1>
 
