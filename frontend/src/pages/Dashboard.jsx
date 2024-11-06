@@ -13,6 +13,7 @@ import DashBooked from "../dashboard_pages/DashBooked";
 import DashBookingCancel from "../dashboard_pages/DashBookingCancel";
 import DashBookingEdit from "../dashboard_pages/DashBookingEdit";
 import DashOverView from "../dashboard_pages/DashOverView";
+import DashBookingCreate from "../dashboard_pages/DashBookingCreate";
 
 export default function Dashboard() {
   const loaction = useLocation();
@@ -55,6 +56,8 @@ export default function Dashboard() {
       {tab === "booking-edit" && <DashBookingEdit />}
       {/* overview */}
       {tab === "dash" && <DashOverView />}
+      {/* booking create */}
+      {tab === "booking-create" && <DashBookingCreate />}
     </div>
   );
 }

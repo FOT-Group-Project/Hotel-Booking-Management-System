@@ -12,9 +12,9 @@ import { RiHotelFill } from "react-icons/ri";
 import { FaBed } from "react-icons/fa6";
 
 import { FaSignInAlt, FaWindowClose, FaSignOutAlt } from "react-icons/fa";
-import { MdBedroomParent, MdEditSquare } from "react-icons/md";
+import { MdBedroomParent, MdEditSquare, MdBathroom } from "react-icons/md";
 import { BiSolidCategory } from "react-icons/bi";
-import { IoIosMan } from "react-icons/io";
+import { IoIosMan, IoIosBed } from "react-icons/io";
 
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -63,15 +63,46 @@ export default function DashSidebar() {
             </Sidebar.Item>
           </Link>
 
-          <Link to="/dashboard?tab=booked">
-            <Sidebar.Item
-              active={tab === "booked" || !tab}
-              icon={FaBed}
-              as="div"
-            >
-              Booked
-            </Sidebar.Item>
-          </Link>
+          <Sidebar.Collapse icon={FaBed} label="Booking">
+            <Link to="/dashboard?tab=booked">
+              <Sidebar.Item
+                active={tab === "booking-booked" || !tab}
+                icon={MdBathroom}
+                as="div"
+              >
+                All Booking
+              </Sidebar.Item>
+            </Link>
+
+            <Link to="/dashboard?tab=booking-create">
+              <Sidebar.Item
+                active={tab === "booking-create" || !tab}
+                icon={IoIosBed}
+                as="div"
+              >
+                Booking Create
+              </Sidebar.Item>
+            </Link>
+            <Link to="/dashboard?tab=booking-edit">
+              <Sidebar.Item
+                active={tab === "booking-edit" || !tab}
+                icon={MdEditSquare}
+                as="div"
+              >
+                Booking Edit
+              </Sidebar.Item>
+            </Link>
+
+            <Link to="/dashboard?tab=booking-cancel">
+              <Sidebar.Item
+                active={tab === "booking-cancel" || !tab}
+                icon={FaWindowClose}
+                as="div"
+              >
+                Booking Cancel
+              </Sidebar.Item>
+            </Link>
+          </Sidebar.Collapse>
 
           <Link to="/dashboard?tab=check-in">
             <Sidebar.Item
@@ -90,26 +121,6 @@ export default function DashSidebar() {
               as="div"
             >
               Check Out
-            </Sidebar.Item>
-          </Link>
-
-          <Link to="/dashboard?tab=booking-edit">
-            <Sidebar.Item
-              active={tab === "booking-edit" || !tab}
-              icon={MdEditSquare}
-              as="div"
-            >
-              Booking Edit
-            </Sidebar.Item>
-          </Link>
-
-          <Link to="/dashboard?tab=booking-cancel">
-            <Sidebar.Item
-              active={tab === "booking-cancel" || !tab}
-              icon={FaWindowClose}
-              as="div"
-            >
-              Booking Cancel
             </Sidebar.Item>
           </Link>
 
