@@ -41,6 +41,7 @@ import { Link } from "react-router-dom";
 export default function DashBookingEdit() {
   const { currentUser } = useSelector((state) => state.user);
   const [bookedDetails, setBookedDetails] = useState([]);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
 
   const [formData, setFormData] = useState({
     new_room_id: "",
@@ -120,7 +121,7 @@ export default function DashBookingEdit() {
   const fetchBookedDetails = async () => {
     try {
       setFetchLoding(true);
-      const res = await fetch(`/api/booked/checked-out-details`);
+      const res = await fetch(`/api/booking/get-pending-details`);
       const data = await res.json();
       if (res.ok) {
         setBookedDetails(data.data);
@@ -159,31 +160,30 @@ export default function DashBookingEdit() {
     e.preventDefault();
     try {
       setCreateLoding(true);
-      const res = await fetch(`/api/booked/edit-checkin`, {
-        method: "POST",
+      const res = await fetch(`/api/booking/edit`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ref_no: bookedCheckOut.ref_no,
-          new_room_id: formData.new_room_id,
-          name: formData.name,
-          contact_no: formData.contact_no,
-          date_in: formData.date_in,
-          date_out: formData.date_out,
+          booking_id: selectedBookingId,
+          check_in: formData.date_in,
+          check_out: formData.date_out,
+          room_id: formData.new_room_id,
         }),
       });
       const data = await res.json();
       if (res.ok) {
         setCreateLoding(false);
-        setOpenModal(false);
         fetchBookedDetails();
+        setOpenModal(false);
         setShowAlert(true);
         setAlertMessage(data.message);
         setTimeout(() => {
           setShowAlert(false);
           setAlertMessage("");
         }, 10000);
+        fetchRoom();
       } else {
         setCreateLoding(false);
         setShowAlert(true);
@@ -238,7 +238,11 @@ export default function DashBookingEdit() {
             <Breadcrumb.Item>Edit</Breadcrumb.Item>
           </Breadcrumb>
 
-          <Modal show={openModal} onClose={() => setOpenModal(false)}>
+          <Modal
+            show={openModal}
+            onClose={() => setOpenModal(false)}
+            size="3xl"
+          >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -252,111 +256,28 @@ export default function DashBookingEdit() {
               <Modal.Body>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                   <div className="flex gap-10">
-                    <div className="flex flex-col gap-4">
-                      <h1 className="text-left font-semibold text-lg">
-                        Enter new details
-                      </h1>
-
-                      <div>
-                        <Label value="Select New Room" />
-                        <Select
-                          id="new_room_id"
-                          required
-                          onChange={(e) => {
-                            setFormData({
-                              ...formData,
-                              new_room_id: e.target.value,
-                            });
-                          }}
-                          value={formData.new_room_id}
-                        >
-                          <option value="">Select Room</option>
-
-                          {room.map((room) => (
-                            <option key={room.id} value={room.id}>
-                              {room.room_name} - {room.category_name}
-                            </option>
-                          ))}
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label value="Name" />
-                        <TextInput
-                          id="name"
-                          type="text"
-                          required
-                          shadow
-                          onChange={(e) => handleChange(e)}
-                          placeholder="Nimali Ireshika"
-                          defaultValue={bookedCheckOut.name}
-                        />
-                      </div>
-                      <div>
-                        <Label value="Contact No" />
-                        <TextInput
-                          id="contact_no"
-                          type="number"
-                          required
-                          shadow
-                          onChange={(e) => handleChange(e)}
-                          placeholder="0712345678"
-                          defaultValue={bookedCheckOut.contact_no}
-                        />
-                      </div>
-
-                      <div>
-                        <Label value="Check In Date & Time" />
-                        <TextInput
-                          id="date_in"
-                          type="datetime-local"
-                          required
-                          shadow
-                          value={formData.date_in}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              date_in: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-
-                      <div>
-                        <Label value="Check Out Date & Time" />
-                        <TextInput
-                          id="date_out"
-                          type="datetime-local"
-                          required
-                          shadow
-                          value={formData.date_out}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              date_out: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-5">
+                    <div className="flex flex-col gap-5 ">
                       <h1 className="text-left font-semibold text-lg">
                         Current booking details
                       </h1>
                       <div>
                         <Label value="Reference No : " />
-                        {bookedCheckOut.ref_no}
+                        {bookedCheckOut.reference_number}
                       </div>
 
                       <div>
                         <Label value="Name : " />
-                        {bookedCheckOut.name}
+                        {bookedCheckOut.customer_name}
+                      </div>
+
+                      <div>
+                        <Label value="Email : " />
+                        {bookedCheckOut.customer_email}
                       </div>
 
                       <div>
                         <Label value="Contact No : " />
-                        {bookedCheckOut.contact_no}
+                        {bookedCheckOut.customer_phone}
                       </div>
 
                       <div>
@@ -415,6 +336,70 @@ export default function DashBookingEdit() {
                         </div>
                       </div>
                     </div>
+
+                    <div className="flex flex-col gap-4 ">
+                      <h1 className="text-left font-semibold text-lg">
+                        Enter new details
+                      </h1>
+
+                      <div>
+                        <Label value="Select New Room" />
+                        <Select
+                          id="new_room_id"
+                          required
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              new_room_id: e.target.value,
+                            });
+                          }}
+                          value={formData.new_room_id}
+                        >
+                          <option value="">Select a Room</option>
+                          {room.map((room) => (
+                            <option key={room.id} value={room.id}>
+                              {room.room_name} {" - "} {room.category_name}{" "}
+                              {" - Rs. "}
+                              {room.price} {" - "} {room.status.toUpperCase()}
+                            </option>
+                          ))}
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label value="Check In Date & Time" />
+                        <TextInput
+                          id="date_in"
+                          type="datetime-local"
+                          required
+                          shadow
+                          value={formData.date_in}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              date_in: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <Label value="Check Out Date & Time" />
+                        <TextInput
+                          id="date_out"
+                          type="datetime-local"
+                          required
+                          shadow
+                          value={formData.date_out}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              date_out: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className="flex gap-2 justify-end">
                     <Button color="red" onClick={() => setOpenModal(false)}>
@@ -459,7 +444,7 @@ export default function DashBookingEdit() {
                     <TableHead>
                       <TableHeadCell>Ref No</TableHeadCell>
                       <TableHeadCell>name</TableHeadCell>
-                      <TableHeadCell>contact no</TableHeadCell>
+                      <TableHeadCell>Email & Phone</TableHeadCell>
                       <TableHeadCell>room name</TableHeadCell>
                       <TableHeadCell>Check In Date</TableHeadCell>
                       <TableHeadCell>Check Out Date</TableHeadCell>
@@ -472,10 +457,20 @@ export default function DashBookingEdit() {
                     {currentData.map((bookedDetails) => (
                       <Table.Body className="divide-y" key={bookedDetails.id}>
                         <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <TableCell>{bookedDetails.ref_no}</TableCell>
-                          <TableCell>{bookedDetails.name}</TableCell>
-                          <TableCell>{bookedDetails.contact_no}</TableCell>
-                          <TableCell>{bookedDetails.room_name}</TableCell>
+                          <TableCell>
+                            {bookedDetails.reference_number}
+                          </TableCell>
+                          <TableCell>{bookedDetails.customer_name}</TableCell>
+                          <TableCell>
+                            {bookedDetails.customer_email}
+                            <br />
+                            {bookedDetails.customer_phone}
+                          </TableCell>
+                          <TableCell>
+                            {bookedDetails.room_name}
+                            <br />
+                            {bookedDetails.room_category_name}
+                          </TableCell>
                           <TableCell>
                             {formatDate(bookedDetails.date_in)}
                             {<br />}
@@ -521,6 +516,7 @@ export default function DashBookingEdit() {
                               layout="outline"
                               onClick={() => {
                                 setBookedCheckOut(bookedDetails);
+                                setSelectedBookingId(bookedDetails.booking_id);
                                 setOpenModal(true);
                               }}
                               className="bg-green-700"
