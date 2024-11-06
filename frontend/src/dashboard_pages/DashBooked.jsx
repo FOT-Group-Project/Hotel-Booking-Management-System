@@ -204,7 +204,16 @@ export default function DashBooked() {
                           </TableCell>
 
                           <TableCell>
-                            {bookedDetails.booking_status === "confirmed" ? (
+                            {bookedDetails.booking_status === "checked_out" ? (
+                              <Badge color="pink" size="lg">
+                                Check Out
+                              </Badge>
+                            ) : bookedDetails.booking_status ===
+                              "checked_in" ? (
+                              <Badge color="indigo" size="lg">
+                                Check In
+                              </Badge>
+                            ) : bookedDetails.booking_status === "confirmed" ? (
                               <Badge color="success" size="lg">
                                 Confirmed
                               </Badge>
