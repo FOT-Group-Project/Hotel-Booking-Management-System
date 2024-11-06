@@ -2,54 +2,20 @@ const models = require("../models");
 
 // Create a new check-in using stored procedure
 function checkIn(req, res) {
-  const { room_id, name, contact_no, date_in, date_out, booked_cid } = req.body;
+  const { booking_id } = req.body;
+  const status = "Checked-in";
 
-  const ref_no =
-    "RFC-" + name.split(" ")[0].toUpperCase() + "-" + room_id + "-" + date_in;
-
-  if (new Date(date_in) > new Date(date_out)) {
+  if (!booking_id) {
     return res.status(400).json({
       success: false,
-      message: "Check-in date should be less than check-out date",
-    });
-  }
-
-  if (new Date(date_in) + 1 < new Date()) {
-    return res.status(400).json({
-      success: false,
-      message: "Check-in date should be future date",
-    });
-  }
-
-  if (new Date(date_out) < new Date()) {
-    return res.status(400).json({
-      success: false,
-      message: "Check-out date should be future date",
-    });
-  }
-
-  if (new Date(date_out) < new Date(date_in)) {
-    return res.status(400).json({
-      success: false,
-      message: "Check-out date should be greater than check-in date",
+      message: "Booking ID is required.",
     });
   }
 
   models.sequelize
-    .query(
-      "CALL CheckInProcedure(:ref_no, :room_id, :name, :contact_no, :date_in, :date_out, :booked_cid)",
-      {
-        replacements: {
-          ref_no,
-          room_id,
-          name,
-          contact_no,
-          date_in,
-          date_out,
-          booked_cid,
-        },
-      }
-    )
+    .query("CALL CheckIn(:booking_id, :status)", {
+      replacements: { booking_id, status },
+    })
     .then((result) => {
       res.status(200).json({
         success: true,

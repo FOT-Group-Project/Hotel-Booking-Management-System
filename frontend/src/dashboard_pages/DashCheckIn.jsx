@@ -21,8 +21,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { React, useEffect, useRef, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
-import { FaSignOutAlt } from "react-icons/fa";
-import { FaSignInAlt } from "react-icons/fa";
+import { FaSignInAlt, FaSignOutAlt, FaWindowClose } from "react-icons/fa";
 import "react-circular-progressbar/dist/styles.css";
 import { FaUserEdit } from "react-icons/fa";
 import {
@@ -39,6 +38,8 @@ import { Link } from "react-router-dom";
 
 export default function DashCheckIn() {
   const { currentUser } = useSelector((state) => state.user);
+  const [bookedDetails, setBookedDetails] = useState([]);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
 
   const [formData, setFormData] = useState({
     room_name: "",
@@ -53,99 +54,102 @@ export default function DashCheckIn() {
   const [alertMessage, setAlertMessage] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
-  const [userIdToDelete, setUserIdToDelete] = useState(null);
-
-  const fetchRoom = async () => {
-    try {
-      setFetchLoding(true);
-      const res = await fetch(`/api/room/getroom-all-details`);
-      const data = await res.json();
-      if (res.ok) {
-        setRoom(data.rooms);
-        setFetchLoding(false);
-      }
-    } catch (error) {
-      console.log(error.message);
-      setFetchLoding(false);
-    }
-  };
-
-  const fetchCustomer = async () => {
-    try {
-      setFetchLoding(true);
-      const res = await fetch(`/api/user/getcustomers`);
-      const data = await res.json();
-      if (res.ok) {
-        setCustomer(data.customers);
-        setFetchLoding(false);
-      }
-    } catch (error) {
-      console.log(error.message);
-      setFetchLoding(false);
-    }
-  };
+  const [bookedCheckOut, setBookedCheckOut] = useState([]);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-  const totalPages = Math.ceil(room.length / itemsPerPage);
+  const itemsPerPage = 7;
+  const totalPages = Math.ceil(bookedDetails.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
-  const currentData = room.slice(
+  const currentData = bookedDetails.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
   // Pagination
 
-  useEffect(() => {
-    fetchRoom();
-    fetchCustomer();
-  }, []);
+  const formatDate = (date) => {
+    if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
+    try {
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(new Date(date));
+    } catch {
+      return "Invalid Date";
+    }
+  };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-    console.log(formData);
+  const formatTime = (date) => {
+    if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
+    try {
+      return new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true, // This will display time in AM/PM format
+      }).format(new Date(date));
+    } catch {
+      return "Invalid Date";
+    }
+  };
+
+  const calculateDaysBetween = (date_in, date_out) => {
+    if (!date_in || !date_out) return "N/A";
+    const startDate = new Date(date_in);
+    const endDate = new Date(date_out);
+    if (isNaN(startDate) || isNaN(endDate)) return "N/A";
+
+    const differenceInTime = endDate - startDate;
+    return (differenceInTime / (1000 * 3600 * 24)).toFixed(0);
+  };
+
+  const fetchBookedDetails = async () => {
+    try {
+      setFetchLoding(true);
+      const res = await fetch(`/api/booking/get-pending-details`);
+      const data = await res.json();
+      if (res.ok) {
+        setBookedDetails(data.data);
+        setFetchLoding(false);
+      } else {
+        setFetchLoding(false);
+        setShowAlert(true);
+        setAlertMessage(data.message);
+        setTimeout(() => {
+          setShowAlert(false);
+          setAlertMessage("");
+        }, 10000);
+      }
+    } catch (error) {
+      console.log(error.message);
+      setFetchLoding(false);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setCreateLoding(true);
+
     try {
-      setCreateLoding(true);
-
-      // Prepare the data to be sent
-      const requestData = {
-        ref_no: formData.ref_no, // Getting reference number from formData
-        room_id: formData.id, // Getting the selected room ID
-        name: formData.name, // Getting the customer name
-        contact_no: formData.contact_no, // Getting the contact number
-        date_in: formData.check_in_date, // Use date as is (assumed to be 'YYYY-MM-DD')
-        date_out: formData.check_out_date, // Use date as is (assumed to be 'YYYY-MM-DD')
-        booked_cid: currentUser.id, // Assuming `currentUser.id` is the customer ID
-      };
-
       const res = await fetch(`/api/booked/checkin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData),
+        body: JSON.stringify({ booking_id: selectedBookingId }),
       });
-
       const data = await res.json();
-
       if (res.ok) {
-        fetchRoom(); // Refresh the list after creation
-        setFormData({
-          room_name: "",
-          category_id: "",
-          availability: "",
-          name: "",
-          contact_no: "",
-          check_in_date: "",
-          check_out_date: "",
-        }); // Clear the form after creation
         setCreateLoding(false);
-        setOpenModal(false); // Close the modal after success
+        setOpenModal(false);
+        fetchBookedDetails();
+        setShowAlert(true);
+        setAlertMessage(data.message);
+        setTimeout(() => {
+          setShowAlert(false);
+          setAlertMessage("");
+        }, 10000);
       } else {
         setCreateLoding(false);
         setShowAlert(true);
@@ -160,6 +164,10 @@ export default function DashCheckIn() {
       setCreateLoding(false);
     }
   };
+
+  useEffect(() => {
+    fetchBookedDetails();
+  }, []);
 
   return (
     <div className="p-3 w-full">
@@ -179,110 +187,122 @@ export default function DashCheckIn() {
             <Breadcrumb.Item>Check In</Breadcrumb.Item>
           </Breadcrumb>
 
-          <Modal
-            show={openModal}
-            onClose={() => setOpenModal(false)}
-            popup
-            size="lg"
-          >
-            <Modal.Header />
-            <Modal.Body>
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <h1 className="text-xl font-semibold">Check In Room</h1>
+          <Modal show={openModal} onClose={() => setOpenModal(false)} size="md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Modal.Header>
+                <h1 className="text-xl font-semibold">Check In</h1>
+              </Modal.Header>
 
-                {showAlert && (
-                  <Alert color="failure" className="flex items-center">
-                    <div className="flex">
-                      <HiOutlineExclamationCircle className="w-6 h-6 mr-4" />
-                      {alertMessage}
+              <Modal.Body>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                  <div>
+                    <Label value="Reference No : " />
+                    {bookedCheckOut.reference_number}
+                  </div>
+
+                  <div>
+                    <Label value="Name : " />
+                    {bookedCheckOut.customer_name}
+                  </div>
+
+                  <div>
+                    <Label value="Email : " />
+                    {bookedCheckOut.customer_email}
+                  </div>
+
+                  <div>
+                    <Label value="Contact No : " />
+                    {bookedCheckOut.customer_phone}
+                  </div>
+
+                  <div>
+                    <Label value="Room Name : " />
+                    {bookedCheckOut.room_name}
+                  </div>
+
+                  <div>
+                    <Label value="Check In Date : " />
+                    {formatDate(bookedCheckOut.date_in)}
+                  </div>
+
+                  <div>
+                    <Label value="Check Out Date : " />
+                    {formatDate(bookedCheckOut.date_out)}
+                  </div>
+
+                  <div>
+                    <Label value="No of Days : " />
+                    {calculateDaysBetween(
+                      bookedCheckOut.date_in,
+                      bookedCheckOut.date_out
+                    )}{" "}
+                    days
+                  </div>
+
+                  <div>
+                    <Label value="Total Price : " />
+                    <b>Rs. {bookedCheckOut.total_price}</b>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Label value="Status : " />
+
+                    <div className="w-28">
+                      {bookedCheckOut.status_description === "Checked Out" ? (
+                        <Badge color="success" size="lg">
+                          Checked Out
+                        </Badge>
+                      ) : bookedCheckOut.status_description === "Checked In" ? (
+                        <Badge color="warning" size="lg">
+                          Checked In
+                        </Badge>
+                      ) : bookedCheckOut.status_description === "Canceled" ? (
+                        <Badge color="info" size="lg">
+                          Canceled
+                        </Badge>
+                      ) : (
+                        <Badge color="warning" size="lg">
+                          Pending
+                        </Badge>
+                      )}
                     </div>
-                  </Alert>
-                )}
-                <div>
-                  <Label value="Room Name : " />
-                  {formData.room_name} {" - "} {formData.category_name}
-                </div>
+                  </div>
 
-                <div>
-                  <Label value="Customer Name" />
-                  <TextInput
-                    id="name"
-                    type="text"
-                    required
-                    shadow
-                    onChange={(e) => handleChange(e)}
-                    placeholder="Kasun Perera"
-                  />
-                </div>
+                  <div className="flex gap-2 justify-end">
+                    <Button color="green" onClick={() => setOpenModal(false)}>
+                      Close
+                    </Button>
+                    <Button
+                      className="bg-indigo-800"
+                      type="submit"
+                      disabled={createLoding}
+                    >
+                      {createLoding ? (
+                        <>
+                          <Spinner size="sm" />
+                          <span className="pl-3">Canceling...</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaSignInAlt className="mr-2 mt-1" />
 
-                <div>
-                  <Label value="Contact No" />
-                  <TextInput
-                    id="contact_no"
-                    type="number"
-                    required
-                    shadow
-                    onChange={(e) => handleChange(e)}
-                    placeholder="0712345678"
-                  />
-                </div>
-
-                <div>
-                  <Label value="Check In Date & Time" />
-                  <TextInput
-                    id="check_in_date"
-                    type="datetime-local"
-                    required
-                    shadow
-                    onChange={(e) => {
-                      const formattedDate = e.target.value; // This will be in 'YYYY-MM-DD'
-                      setFormData({
-                        ...formData,
-                        check_in_date: formattedDate,
-                      });
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <Label value="Check Out Date & Time" />
-                  <TextInput
-                    id="check_out_date"
-                    type="datetime-local"
-                    required
-                    shadow
-                    onChange={(e) => {
-                      const formattedDate = e.target.value; // This will be in 'YYYY-MM-DD'
-                      setFormData({
-                        ...formData,
-                        check_out_date: formattedDate,
-                      });
-                    }}
-                  />
-                </div>
-
-                <div className="flex gap-2 justify-end">
-                  <Button
-                    className="bg-customBlue"
-                    type="submit"
-                    disabled={createLoding}
-                  >
-                    {createLoding ? (
-                      <>
-                        <Spinner size="sm" />
-                        <span className="pl-3">Checking...</span>
-                      </>
-                    ) : (
-                      "Update Room Category"
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </Modal.Body>
+                          <span>Check In</span>
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Modal.Body>
+            </motion.div>
           </Modal>
 
           <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
-            Check In Room
+            Check In
           </h1>
 
           {fetchLoding ? (
@@ -295,67 +315,86 @@ export default function DashCheckIn() {
                 <>
                   <Table hoverable className="shadow-md w-full">
                     <TableHead>
-                      <TableHeadCell>room image</TableHeadCell>
-                      <TableHeadCell>room</TableHeadCell>
-                      <TableHeadCell>category</TableHeadCell>
-                      <TableHeadCell>price</TableHeadCell>
-                      <TableHeadCell style={{ width: "400px" }}>
-                        discription
-                      </TableHeadCell>
-                      <TableHeadCell>status</TableHeadCell>
+                      <TableHeadCell>Ref No</TableHeadCell>
+                      <TableHeadCell>name</TableHeadCell>
+                      <TableHeadCell>Email & Phone</TableHeadCell>
+                      <TableHeadCell>room name</TableHeadCell>
+                      <TableHeadCell>Check In Date</TableHeadCell>
+                      <TableHeadCell>Check Out Date</TableHeadCell>
+                      <TableHeadCell>Total Price</TableHeadCell>
+                      <TableHeadCell>Status</TableHeadCell>
                       <TableHeadCell>
                         <span className="sr-only">Edit</span>
                       </TableHeadCell>
                     </TableHead>
-                    {currentData.map((room) => (
-                      <Table.Body className="divide-y" key={room.id}>
+                    {currentData.map((bookedDetails) => (
+                      <Table.Body className="divide-y" key={bookedDetails.id}>
                         <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                           <TableCell>
-                            <div className="flex items-center gap-4">
-                              <div className="w-28 h-16 relative">
-                                <img
-                                  src={`http://localhost:3001/uploads/${room.image}`}
-                                  alt=""
-                                  className="w-full h-full object-cover rounded-lg"
-                                />
-                              </div>
-                            </div>
+                            {bookedDetails.reference_number}
                           </TableCell>
-                          <TableCell>{room.room_name}</TableCell>
-                          <TableCell>{room.category_name}</TableCell>
+                          <TableCell>{bookedDetails.customer_name}</TableCell>
                           <TableCell>
-                            <b>Rs. {room.price}.00</b>{" "}
+                            {bookedDetails.customer_email}
+                            <br />
+                            {bookedDetails.customer_phone}
                           </TableCell>
-                          <TableCell>{room.description}</TableCell>
                           <TableCell>
-                            {room.status === "available" ? (
-                              <Badge color="success">Available</Badge>
-                            ) : room.status === "occupied" ? (
-                              <Badge color="warning">Occupied</Badge> // Using a different color for occupied
+                            {bookedDetails.room_name}
+                            <br />
+                            {bookedDetails.room_category_name}
+                          </TableCell>
+                          <TableCell>
+                            {formatDate(bookedDetails.date_in)}
+                            {<br />}
+                            {"At : "}
+                            {formatTime(bookedDetails.date_in)}
+                          </TableCell>
+                          <TableCell>
+                            {formatDate(bookedDetails.date_out)}
+                            {<br />}
+                            {"At : "}
+                            {formatTime(bookedDetails.date_out)}
+                          </TableCell>
+
+                          <TableCell>
+                            <b>Rs. {bookedDetails.total_price}</b>
+                          </TableCell>
+
+                          <TableCell>
+                            {bookedDetails.status_description ===
+                            "Checked Out" ? (
+                              <Badge color="success" size="lg">
+                                Checked Out
+                              </Badge>
+                            ) : bookedDetails.status_description ===
+                              "Checked In" ? (
+                              <Badge color="warning" size="lg">
+                                Checked In
+                              </Badge>
+                            ) : bookedDetails.status_description ===
+                              "Canceled" ? (
+                              <Badge color="info" size="lg">
+                                Canceled
+                              </Badge>
                             ) : (
-                              <Badge color="failure">Unavailable</Badge>
+                              <Badge color="warning" size="lg">
+                                Pending
+                              </Badge>
                             )}
                           </TableCell>
                           <TableCell>
                             <Button
+                              size="sm"
+                              layout="outline"
                               onClick={() => {
+                                setBookedCheckOut(bookedDetails);
+                                setSelectedBookingId(bookedDetails.booking_id);
                                 setOpenModal(true);
-                                // set all the data to the form
-                                setFormData({
-                                  id: room.id,
-                                  room_name: room.room_name,
-                                  category_id: room.category_id,
-                                  category_name: room.category_name,
-                                  availability: room.availability,
-                                });
                               }}
-                              className="w-full mb-2  bg-customBlue"
-                              disabled={
-                                room.status === "occupied" ||
-                                room.status === "unavailable"
-                              }
+                              className="bg-indigo-800"
                             >
-                              <FaSignInAlt className="h-5 w-4 mr-2" />
+                              <FaSignInAlt className="mr-2 mt-1" />
                               Check In
                             </Button>
                           </TableCell>
@@ -381,7 +420,7 @@ export default function DashCheckIn() {
                 <div className="flex flex-col items-center justify-center h-96">
                   <HiInformationCircle className="text-4xl text-gray-400" />
                   <h1 className="text-xl font-semibold mt-3 text-gray-400">
-                    No data found
+                    No any booking to cancel
                   </h1>
                 </div>
               )}
