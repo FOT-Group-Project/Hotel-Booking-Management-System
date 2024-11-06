@@ -26,6 +26,33 @@ function getAllBookingDetails(req, res) {
   }
 }
 
+// Get pending booking details using stored procedure
+function getPendingBookingDetails(req, res) {
+  try {
+    models.sequelize
+      .query("SELECT * FROM GetPendingBookingDetails")
+      .then((result) => {
+        res.status(200).json({
+          success: true,
+          message: "Pending booking data fetched successfully",
+          data: result[0],
+        });
+      })
+
+      .catch((err) => {
+        res.status(400).json({
+          success: false,
+          message: err.message,
+        });
+      });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
 // Create a new booking using stored procedure
 function createBooking(req, res) {
   const { room_id, customer_id, check_in, check_out } = req.body;
@@ -234,6 +261,7 @@ function cancelBooking(req, res) {
 
 module.exports = {
   getAllBookingDetails: getAllBookingDetails,
+  getPendingBookingDetails: getPendingBookingDetails,
   createBooking: createBooking,
   editBooking: editBooking,
   cancelBooking: cancelBooking,
