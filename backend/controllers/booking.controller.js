@@ -30,28 +30,56 @@ function getAllBookingDetails(req, res) {
 function createBooking(req, res) {
   const { room_id, customer_id, check_in, check_out } = req.body;
 
-  if (new Date(date_in) > new Date(date_out)) {
+  if (!room_id) {
+    return res.status(400).json({
+      success: false,
+      message: "Room ID is required",
+    });
+  }
+
+  if (!customer_id) {
+    return res.status(400).json({
+      success: false,
+      message: "Customer ID is required",
+    });
+  }
+
+  if (!check_in) {
+    return res.status(400).json({
+      success: false,
+      message: "Check-in date is required",
+    });
+  }
+
+  if (!check_out) {
+    return res.status(400).json({
+      success: false,
+      message: "Check-out date is required",
+    });
+  }
+
+  if (new Date(check_in) > new Date(check_out)) {
     return res.status(400).json({
       success: false,
       message: "Check-in date should be less than check-out date",
     });
   }
 
-  if (new Date(date_in) + 1 < new Date()) {
+  if (new Date(check_in) + 1 < new Date()) {
     return res.status(400).json({
       success: false,
       message: "Check-in date should be future date",
     });
   }
 
-  if (new Date(date_out) < new Date()) {
+  if (new Date(check_out) < new Date()) {
     return res.status(400).json({
       success: false,
       message: "Check-out date should be future date",
     });
   }
 
-  if (new Date(date_out) < new Date(date_in)) {
+  if (new Date(check_out) < new Date(check_in)) {
     return res.status(400).json({
       success: false,
       message: "Check-out date should be greater than check-in date",
