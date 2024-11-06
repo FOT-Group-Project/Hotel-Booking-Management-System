@@ -21,8 +21,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { React, useEffect, useRef, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
-import { FaSignOutAlt } from "react-icons/fa";
-import { FaSignInAlt } from "react-icons/fa";
+import { FaSignInAlt, FaSignOutAlt, FaWindowClose } from "react-icons/fa";
 import "react-circular-progressbar/dist/styles.css";
 import { FaUserEdit } from "react-icons/fa";
 import {
@@ -40,6 +39,7 @@ import { Link } from "react-router-dom";
 export default function DashCheckOut() {
   const { currentUser } = useSelector((state) => state.user);
   const [bookedDetails, setBookedDetails] = useState([]);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
 
   const [formData, setFormData] = useState({
     room_name: "",
@@ -58,7 +58,7 @@ export default function DashCheckOut() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 7;
   const totalPages = Math.ceil(bookedDetails.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
@@ -107,7 +107,7 @@ export default function DashCheckOut() {
   const fetchBookedDetails = async () => {
     try {
       setFetchLoding(true);
-      const res = await fetch(`/api/booked/checked-out-details`);
+      const res = await fetch(`/api/booking/get-pending-details`);
       const data = await res.json();
       if (res.ok) {
         setBookedDetails(data.data);
@@ -129,17 +129,15 @@ export default function DashCheckOut() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setCreateLoding(true);
+
     try {
-      setCreateLoding(true);
-      const res = await fetch(`/api/booked/checkout`, {
+      const res = await fetch(`/api/booked/checkin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ref_no: bookedCheckOut.ref_no,
-          room_id: bookedCheckOut.room_id,
-        }),
+        body: JSON.stringify({ booking_id: selectedBookingId }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -197,24 +195,29 @@ export default function DashCheckOut() {
               transition={{ duration: 0.3 }}
             >
               <Modal.Header>
-                <h1 className="text-xl font-semibold">Check In Room</h1>
+                <h1 className="text-xl font-semibold">Check Out Room</h1>
               </Modal.Header>
 
               <Modal.Body>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                   <div>
                     <Label value="Reference No : " />
-                    {bookedCheckOut.ref_no}
+                    {bookedCheckOut.reference_number}
                   </div>
 
                   <div>
                     <Label value="Name : " />
-                    {bookedCheckOut.name}
+                    {bookedCheckOut.customer_name}
+                  </div>
+
+                  <div>
+                    <Label value="Email : " />
+                    {bookedCheckOut.customer_email}
                   </div>
 
                   <div>
                     <Label value="Contact No : " />
-                    {bookedCheckOut.contact_no}
+                    {bookedCheckOut.customer_phone}
                   </div>
 
                   <div>
@@ -271,23 +274,24 @@ export default function DashCheckOut() {
                   </div>
 
                   <div className="flex gap-2 justify-end">
-                    <Button color="failure" onClick={() => setOpenModal(false)}>
+                    <Button color="green" onClick={() => setOpenModal(false)}>
                       Close
                     </Button>
                     <Button
-                      className="bg-customBlue"
+                      className="bg-indigo-800"
                       type="submit"
                       disabled={createLoding}
                     >
                       {createLoding ? (
                         <>
                           <Spinner size="sm" />
-                          <span className="pl-3">Checking...</span>
+                          <span className="pl-3">Canceling...</span>
                         </>
                       ) : (
                         <>
-                          <FaSignOutAlt className="mr-2 mt-1" />
-                          Check Out
+                          <FaSignInAlt className="mr-2 mt-1" />
+
+                          <span>Check In</span>
                         </>
                       )}
                     </Button>
@@ -313,11 +317,10 @@ export default function DashCheckOut() {
                     <TableHead>
                       <TableHeadCell>Ref No</TableHeadCell>
                       <TableHeadCell>name</TableHeadCell>
-                      <TableHeadCell>contact no</TableHeadCell>
-                      <TableHeadCell>room</TableHeadCell>
+                      <TableHeadCell>Email & Phone</TableHeadCell>
+                      <TableHeadCell>room name</TableHeadCell>
                       <TableHeadCell>Check In Date</TableHeadCell>
                       <TableHeadCell>Check Out Date</TableHeadCell>
-                      <TableHeadCell>No of Days</TableHeadCell>
                       <TableHeadCell>Total Price</TableHeadCell>
                       <TableHeadCell>Status</TableHeadCell>
                       <TableHeadCell>
@@ -327,10 +330,20 @@ export default function DashCheckOut() {
                     {currentData.map((bookedDetails) => (
                       <Table.Body className="divide-y" key={bookedDetails.id}>
                         <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <TableCell>{bookedDetails.ref_no}</TableCell>
-                          <TableCell>{bookedDetails.name}</TableCell>
-                          <TableCell>{bookedDetails.contact_no}</TableCell>
-                          <TableCell>{bookedDetails.room_name}</TableCell>
+                          <TableCell>
+                            {bookedDetails.reference_number}
+                          </TableCell>
+                          <TableCell>{bookedDetails.customer_name}</TableCell>
+                          <TableCell>
+                            {bookedDetails.customer_email}
+                            <br />
+                            {bookedDetails.customer_phone}
+                          </TableCell>
+                          <TableCell>
+                            {bookedDetails.room_name}
+                            <br />
+                            {bookedDetails.room_category_name}
+                          </TableCell>
                           <TableCell>
                             {formatDate(bookedDetails.date_in)}
                             {<br />}
@@ -343,13 +356,7 @@ export default function DashCheckOut() {
                             {"At : "}
                             {formatTime(bookedDetails.date_out)}
                           </TableCell>
-                          <TableCell>
-                            {calculateDaysBetween(
-                              bookedDetails.date_in,
-                              bookedDetails.date_out
-                            )}{" "}
-                            days
-                          </TableCell>
+
                           <TableCell>
                             <b>Rs. {bookedDetails.total_price}</b>
                           </TableCell>
@@ -382,12 +389,13 @@ export default function DashCheckOut() {
                               layout="outline"
                               onClick={() => {
                                 setBookedCheckOut(bookedDetails);
+                                setSelectedBookingId(bookedDetails.booking_id);
                                 setOpenModal(true);
                               }}
-                              className="bg-customBlue"
+                              className="bg-pink-800"
                             >
-                              <FaSignOutAlt className="h-5 w-4 mr-2" /> Check
-                              Out
+                              <FaSignOutAlt className="mr-2 mt-1" />
+                              Check Out
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -412,7 +420,7 @@ export default function DashCheckOut() {
                 <div className="flex flex-col items-center justify-center h-96">
                   <HiInformationCircle className="text-4xl text-gray-400" />
                   <h1 className="text-xl font-semibold mt-3 text-gray-400">
-                    No any check-In to check-Out
+                    No any booking to cancel
                   </h1>
                 </div>
               )}

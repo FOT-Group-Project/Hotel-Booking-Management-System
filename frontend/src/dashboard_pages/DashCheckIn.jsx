@@ -195,7 +195,7 @@ export default function DashCheckIn() {
               transition={{ duration: 0.3 }}
             >
               <Modal.Header>
-                <h1 className="text-xl font-semibold">Check In</h1>
+                <h1 className="text-xl font-semibold">Check In Room</h1>
               </Modal.Header>
 
               <Modal.Body>
@@ -302,7 +302,7 @@ export default function DashCheckIn() {
           </Modal>
 
           <h1 className="mt-3 mb-3 text-left font-semibold text-xl">
-            Check In
+            Check In Room
           </h1>
 
           {fetchLoding ? (
