@@ -205,7 +205,7 @@ export default function DashBooked() {
 
                           <TableCell>
                             {bookedDetails.booking_status === "checked_out" ? (
-                              <Badge color="pink" size="lg">
+                              <Badge color="success" size="lg">
                                 Check Out
                               </Badge>
                             ) : bookedDetails.booking_status ===
