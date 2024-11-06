@@ -187,10 +187,10 @@ export default function DashOverView() {
                     {overviewData ? overviewData.Total_Chcek_In : "Loading..."}
                   </p>
                 </div>
-                <FaSignInAlt className="bg-red-600 mt-4 text-white rounded-full text-5xl p-3 shadow-lg" />
+                <FaSignInAlt className="bg-yellow-400 mt-4 text-white rounded-full text-5xl p-3 shadow-lg" />
               </div>
               <div className="flex gap-4 text-sm">
-                <span className="text-red-500 font-semibold flex items-center ">
+                <span className="text-yellow-400 font-semibold flex items-center ">
                   Avalibale Rooms :{" "}
                   {overviewData ? overviewData.Available_Rooms : "Loading..."}
                 </span>
@@ -229,7 +229,7 @@ export default function DashOverView() {
                     {overviewData ? overviewData.Total_Customers : "Loading..."}
                   </p>
                 </div>
-                <FaUsers className="bg-green-600 mt-4 text-white rounded-full text-5xl p-3 shadow-lg" />
+                <FaUsers className="bg-green-500 mt-4 text-white rounded-full text-5xl p-3 shadow-lg" />
               </div>
               <div className="flex gap-4 text-sm">
                 <span className="text-green-500 font-semibold flex items-center ">
