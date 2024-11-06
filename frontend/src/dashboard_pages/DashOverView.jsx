@@ -4,6 +4,7 @@ import { React, useEffect, useState } from "react";
 import { FaBed, FaUsers, FaDollarSign } from "react-icons/fa";
 import { HiHome } from "react-icons/hi";
 import { Link } from "react-router-dom";
+import { FaSignInAlt, FaSignOutAlt, FaWindowClose } from "react-icons/fa";
 
 export default function DashOverView() {
   const [fetchData, setFetchData] = useState(null); // Changed to null initially
@@ -67,7 +68,24 @@ export default function DashOverView() {
             </Alert>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-red-100 p-4 rounded-md shadow-md">
+              <h2 className="text-lg font-semibold mb-3 flex items-center">
+                <FaSignInAlt className="text-red-600 mr-2" />
+                Rooms
+              </h2>
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-xl font-semibold">Total Check In</p>
+                </div>
+                <div>
+                  <p className="text-xl font-semibold">
+                    {overviewData ? overviewData.Total_Chcek_In : "Loading..."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="bg-blue-100 p-4 rounded-md shadow-md">
               <h2 className="text-lg font-semibold mb-3 flex items-center">
                 <FaBed className="text-blue-600 mr-2" />
