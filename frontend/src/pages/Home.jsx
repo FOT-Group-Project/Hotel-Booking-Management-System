@@ -160,7 +160,9 @@ export default function Home() {
                         <b>Rs {room.price}.00</b>{" "}
                       </span>
                     </div>
-                    <Button className="bg-customBlue">Book Now</Button>
+                    <Button className="bg-customBlue">
+                      Check Availability
+                    </Button>
                   </Card>
                 ))}
               </>
