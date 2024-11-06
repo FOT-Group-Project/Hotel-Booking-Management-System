@@ -62,94 +62,88 @@ export default function DashOverView() {
             Hotel Overview
           </h1>
 
-          {showAlert && (
-            <Alert color="failure" className="mb-4">
-              {alertMessage}
-            </Alert>
-          )}
-
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-red-100 p-4 rounded-md shadow-md">
-              <h2 className="text-lg font-semibold mb-3 flex items-center">
-                <FaSignInAlt className="text-red-600 mr-2" />
-                Rooms
-              </h2>
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-xl font-semibold">Total Check In</p>
-                </div>
-                <div>
-                  <p className="text-xl font-semibold">
+            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg">
+              <div className="flex justify-between">
+                <div className="">
+                  <h3 className="text-gray-500 text-lg font-semibold ">
+                    Check In
+                  </h3>
+                  <p className="text-2xl font-semibold">
+                    Current Check In :{" "}
                     {overviewData ? overviewData.Total_Chcek_In : "Loading..."}
                   </p>
                 </div>
+                <FaSignInAlt className="bg-red-600 mt-4 text-white rounded-full text-5xl p-3 shadow-lg" />
+              </div>
+              <div className="flex gap-4 text-sm">
+                <span className="text-red-500 font-semibold flex items-center ">
+                  Avalibale Rooms :{" "}
+                  {overviewData ? overviewData.Available_Rooms : "Loading..."}
+                </span>
               </div>
             </div>
 
-            <div className="bg-blue-100 p-4 rounded-md shadow-md">
-              <h2 className="text-lg font-semibold mb-3 flex items-center">
-                <FaBed className="text-blue-600 mr-2" />
-                Rooms
-              </h2>
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-xl font-semibold">Total Rooms</p>
-                  <p className="text-gray-500">Available Rooms</p>
-                </div>
-                <div>
-                  <p className="text-xl font-semibold">
+            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg">
+              <div className="flex justify-between">
+                <div className="">
+                  <h3 className="text-gray-500 text-lg font-semibold ">
+                    Rooms
+                  </h3>
+                  <p className="text-2xl font-semibold">
+                    Total Rooms :{" "}
                     {overviewData ? overviewData.Total_Rooms : "Loading..."}
                   </p>
-                  <p className="text-gray-500">
-                    {overviewData ? overviewData.Available_Rooms : "Loading..."}
-                  </p>
                 </div>
+                <FaBed className="bg-blue-600 mt-4 text-white rounded-full text-5xl p-3 shadow-lg" />
+              </div>
+              <div className="flex gap-4 text-sm">
+                <span className="text-blue-500 font-semibold flex items-center ">
+                  Avalibale Rooms :{" "}
+                  {overviewData ? overviewData.Available_Rooms : "Loading..."}
+                </span>
               </div>
             </div>
 
-            <div className="bg-green-100 p-4 rounded-md shadow-md">
-              <h2 className="text-lg font-semibold mb-3 flex items-center">
-                <FaUsers className="text-green-600 mr-2" />
-                Customers
-              </h2>
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-xl font-semibold">Total Customers</p>
-                  <p className="text-gray-500">Active Customers</p>
-                </div>
-                <div>
-                  <p className="text-xl font-semibold">
+            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg">
+              <div className="flex justify-between">
+                <div className="">
+                  <h3 className="text-gray-500 text-lg font-semibold ">
+                    Customers
+                  </h3>
+                  <p className="text-2xl font-semibold">
+                    Total Customers :{" "}
                     {overviewData ? overviewData.Total_Customers : "Loading..."}
                   </p>
-                  <p className="text-gray-500">
-                    {overviewData
-                      ? overviewData.Active_Customers
-                      : "Loading..."}
-                  </p>
                 </div>
+                <FaUsers className="bg-green-600 mt-4 text-white rounded-full text-5xl p-3 shadow-lg" />
+              </div>
+              <div className="flex gap-4 text-sm">
+                <span className="text-green-500 font-semibold flex items-center ">
+                  Active Customers :{" "}
+                  {overviewData ? overviewData.Active_Customers : "Loading..."}
+                </span>
               </div>
             </div>
 
-            <div className="bg-purple-100 p-4 rounded-md shadow-md">
-              <h2 className="text-lg font-semibold mb-3 flex items-center">
-                <FaDollarSign className="text-purple-600 mr-2" />
-                Revenue
-              </h2>
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-xl font-semibold">Total Revenue</p>
-                  <p className="text-gray-500">Monthly Revenue</p>
-                </div>
-                <div>
-                  <p className="text-xl font-semibold">
+            <div className="flex flex-col p-3 dark:bg-slate-800 gap-4  w-full rounded-md shadow-lg">
+              <div className="flex justify-between">
+                <div className="">
+                  <h3 className="text-gray-500 text-lg font-semibold ">
+                    Revenue
+                  </h3>
+                  <p className="text-2xl font-semibold">
                     Rs.{" "}
                     {overviewData ? overviewData.Total_Revenue : "Loading..."}
                   </p>
-                  <p className="text-gray-500">
-                    Rs.{" "}
-                    {overviewData ? overviewData.Monthly_Revenue : "Loading..."}
-                  </p>
                 </div>
+                <FaDollarSign className="bg-purple-600 mt-4 text-white rounded-full text-5xl p-3 shadow-lg" />
+              </div>
+              <div className="flex gap-4 text-sm">
+                <span className="text-purple-500 font-semibold flex items-center ">
+                  Monthly Revenue : Rs.{" "}
+                  {overviewData ? overviewData.Monthly_Revenue : "Loading..."}
+                </span>
               </div>
             </div>
           </div>
