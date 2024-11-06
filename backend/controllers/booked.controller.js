@@ -33,11 +33,19 @@ function checkIn(req, res) {
 
 // Create a new check-out using stored procedure
 function checkOut(req, res) {
-  const { ref_no, room_id } = req.body;
+  const { booking_id } = req.body;
+  const status = "Checked-out";
+
+  if (!booking_id) {
+    return res.status(400).json({
+      success: false,
+      message: "Booking ID is required.",
+    });
+  }
 
   models.sequelize
-    .query("CALL CheckOutProcedure(:ref_no, :room_id)", {
-      replacements: { ref_no, room_id },
+    .query("CALL CheckOut(:booking_id, :status)", {
+      replacements: { booking_id, status },
     })
     .then((result) => {
       res.status(200).json({

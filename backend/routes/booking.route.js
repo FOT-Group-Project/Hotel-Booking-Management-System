@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get("/get-all-details", bookingController.getAllBookingDetails);
 router.get("/get-pending-details", bookingController.getPendingBookingDetails);
+router.get("/get-checked-in-details", bookingController.getCheckedInBookingDetails);
 router.post("/create", bookingController.createBooking);
 router.put("/edit", bookingController.editBooking);
 router.delete("/cancel/:booking_id", bookingController.cancelBooking);
