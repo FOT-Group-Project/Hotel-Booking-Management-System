@@ -72,11 +72,20 @@ export default function DashBookingCancel() {
   const formatDate = (date) => {
     if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
     try {
+      // Parse the date as UTC to avoid timezone issues
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate()
+        )
+      );
+
       return new Intl.DateTimeFormat("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
-      }).format(new Date(date));
+      }).format(utcDate);
     } catch {
       return "Invalid Date";
     }

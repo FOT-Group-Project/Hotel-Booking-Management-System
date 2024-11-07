@@ -68,7 +68,7 @@ export default function DashCheckIn() {
   );
   // Pagination
 
-  const formatDate = (date) => {
+  const formatTodayDate = (date) => {
     if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
     try {
       return new Intl.DateTimeFormat("en-US", {
@@ -76,6 +76,28 @@ export default function DashCheckIn() {
         month: "long",
         day: "numeric",
       }).format(new Date(date));
+    } catch {
+      return "Invalid Date";
+    }
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
+    try {
+      // Parse the date as UTC to avoid timezone issues
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate()
+        )
+      );
+
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(utcDate);
     } catch {
       return "Invalid Date";
     }
@@ -379,7 +401,7 @@ export default function DashCheckIn() {
                               </Badge>
                             ) : (
                               <Badge color="warning" size="lg">
-                                Pending
+                                Pending{" "}
                               </Badge>
                             )}
                           </TableCell>
@@ -387,6 +409,10 @@ export default function DashCheckIn() {
                             <Button
                               size="sm"
                               layout="outline"
+                              disabled={
+                                formatDate(bookedDetails.date_in) >
+                                formatTodayDate(new Date().toLocaleDateString())
+                              }
                               onClick={() => {
                                 setBookedCheckOut(bookedDetails);
                                 setSelectedBookingId(bookedDetails.booking_id);
