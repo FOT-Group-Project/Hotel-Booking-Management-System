@@ -51,7 +51,7 @@ export default function ContactUs() {
                   </p>
                   <p className="text-gray-600 mb-2">
                     <BsMailbox className="inline-block mr-2" />
-                    Email:
+                    Email: salford@co.com
                     <a
                       href="mailto:salford@co.com"
                       className="text-blue-500 hover:underline"
