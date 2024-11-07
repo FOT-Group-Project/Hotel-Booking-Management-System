@@ -29,11 +29,33 @@ export default function ContactUs() {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
         >
+          <section className="bg-gray-100 py-16" id="hero">
+            <div className="container mx-auto px-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                <div>
+                  <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
+                  <p className="text-lg text-gray-600 mb-4">
+                    If you have any questions or need help with anything, please
+                    feel free to contact us. Our team is always ready to help
+                    you with anything you need. You can reach us by phone,
+                    email, or social media. We look forward to hearing from you!
+                  </p>
+
+                  <Button
+                    className="bg-customBlue w-1/4"
+                    as={Link}
+                    to="/contact"
+                  >
+                    Contact Us
+                  </Button>
+                </div>
+                <img src={image1} alt="" className="rounded-lg shadow-md" />
+              </div>
+            </div>
+          </section>
+
           <section className="py-16 bg-gray-100" id="rooms">
             <div className="container mx-auto px-4">
-              <h2 className="text-4xl font-bold text-center mb-4">
-                Contact Us
-              </h2>
               <p className="text-center text-lg text-gray-600 mb-12">
                 If you have any questions or need help with anything, please
                 feel free to contact us. Our team is always ready to help you

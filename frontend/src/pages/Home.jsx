@@ -147,7 +147,7 @@ export default function Home() {
                 considered to ensure a truly unforgettable stay.
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {fetchLoding ? (
                   <div className="flex justify-center items-center h-96">
                     <Spinner size="xl" />
