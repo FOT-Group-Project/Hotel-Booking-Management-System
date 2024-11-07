@@ -306,7 +306,7 @@ export default function DashOverView() {
             </div>
           ) : (
             <>
-              {currentUser.role == "admin" && currentData.length > 0 ? (
+              { currentData.length > 0 ? (
                 <>
                   <Table hoverable className="shadow-md w-full">
                     <TableHead>
