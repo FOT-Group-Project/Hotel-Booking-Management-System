@@ -91,11 +91,27 @@ export default function DashBooked() {
   };
 
   const formatTime = (date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    }).format(new Date(date));
+    if (!date) return "N/A"; // Return "N/A" if the date is invalid
+    try {
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate(),
+          new Date(date).getUTCHours(),
+          new Date(date).getUTCMinutes()
+        )
+      );
+
+      return new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+        timeZone: "UTC", // Ensure the time is consistent with UTC
+      }).format(utcDate);
+    } catch {
+      return "Invalid Time";
+    }
   };
 
   const calculateDaysBetween = (date_in, date_out) => {

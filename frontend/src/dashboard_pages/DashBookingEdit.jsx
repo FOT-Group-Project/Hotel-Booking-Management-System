@@ -94,15 +94,26 @@ export default function DashBookingEdit() {
   };
 
   const formatTime = (date) => {
-    if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
+    if (!date) return "N/A"; // Return "N/A" if the date is invalid
     try {
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate(),
+          new Date(date).getUTCHours(),
+          new Date(date).getUTCMinutes()
+        )
+      );
+
       return new Intl.DateTimeFormat("en-US", {
         hour: "numeric",
         minute: "numeric",
-        hour12: true, // This will display time in AM/PM format
-      }).format(new Date(date));
+        hour12: true,
+        timeZone: "UTC", // Ensure the time is consistent with UTC
+      }).format(utcDate);
     } catch {
-      return "Invalid Date";
+      return "Invalid Time";
     }
   };
 
