@@ -231,7 +231,12 @@ export default function DashBooked() {
                             {calculateDaysBetween(
                               bookedDetails.date_in,
                               bookedDetails.date_out
-                            )}{" "}
+                            ) == 0
+                              ? 1
+                              : calculateDaysBetween(
+                                  bookedDetails.date_in,
+                                  bookedDetails.date_out
+                                )}{" "}
                             days
                           </TableCell>
                           <TableCell>

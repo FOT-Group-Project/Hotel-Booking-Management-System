@@ -319,7 +319,7 @@ export default function DashCheckOut() {
                         <>
                           <FaSignInAlt className="mr-2 mt-1" />
 
-                          <span>Check In</span>
+                          <span>Check Out</span>
                         </>
                       )}
                     </Button>

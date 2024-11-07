@@ -275,13 +275,17 @@ export default function DashBookingCreate() {
                     placeholder="Select a Room"
                   >
                     <option value="">Select a Room</option>
-                    {room.map((room) => (
-                      <option key={room.id} value={room.id}>
-                        {room.room_name} {" - "} {room.category_name}{" "}
-                        {" - Rs. "}
-                        {room.price} {" - "} {room.status.toUpperCase()}
-                      </option>
-                    ))}
+                    {room
+                      .filter(
+                        (room) => room.status.toLowerCase() === "available"
+                      )
+                      .map((room) => (
+                        <option key={room.id} value={room.id}>
+                          {room.room_name} {" - "} {room.category_name}{" "}
+                          {" - Rs. "}
+                          {room.price} {" - "} {room.status.toUpperCase()}
+                        </option>
+                      ))}
                   </Select>
                 </div>
 
