@@ -109,6 +109,10 @@ export default function DashRooms() {
     console.log(formData);
   };
 
+  const handleEditChange = (e) => {
+    setEditedCategory({ ...editedCategory, [e.target.id]: e.target.value });
+  };
+
   const handleDrop = (files) => {
     if (files && files[0]) {
       const file = files[0];
@@ -193,28 +197,25 @@ export default function DashRooms() {
     e.preventDefault();
     try {
       setUpdateLoding(true);
-
-      const formData = new FormData();
-      formData.append("id", editedCategory.id);
-      formData.append("room_name", editedCategory.room_name);
-      formData.append("category_id", editedCategory.category_id);
-
-      if (editedCategory.image instanceof File) {
-        formData.append("image", editedCategory.image);
-      }
-
-      const res = await fetch(`/api/room/update/${editedCategory.id}`, {
-        method: "PUT",
-        body: formData, // Use FormData directly here
+      const res = await fetch(`/api/room/update`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: editedCategory.id,
+          room_name: editedCategory.room_name,
+          category_id: editedCategory.category_id,
+          status: editedCategory.status,
+        }),
       });
 
       const data = await res.json();
+
       if (res.ok) {
-        fetchRoom(); // Refresh the list after updating
-        setOpenModalEdit(false); // Close the edit modal
-        setEditedCategory(null); // Clear the edited category
-        setImagePreview(null); // Clear image preview after editing
-        setEditImagePreview(null); // Clear edit image preview on successful update
+        fetchRoom(); // Refresh the list after creation
+        setOpenModalEdit(false); // Close the modal
+        setUpdateLoding(false);
       } else {
         setUpdateLoding(false);
         setShowAlert(true);

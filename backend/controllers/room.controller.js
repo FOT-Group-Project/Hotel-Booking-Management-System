@@ -43,12 +43,16 @@ function createRoom(req, res) {
 
 // Update room category using stored procedure
 function updateRoom(req, res) {
-  const { id } = req.params;
-  const { room_name, category_id, status } = req.body;
-
+  const { id, room_name, category_id, status } = req.body;
+  console.log(id);
   models.sequelize
     .query("CALL UpdateRoom(:id, :room_name, :category_id, :status)", {
-      replacements: { id, room_name, category_id, status },
+      replacements: {
+        id: id,
+        room_name: room_name,
+        category_id: category_id,
+        status: status,
+      },
     })
     .then((result) => {
       res.status(200).json({

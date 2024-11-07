@@ -218,6 +218,7 @@ export default function DashRoomCategorys() {
         formDataToSend.append("image", editedCategory.image);
       }
 
+      console.log(formDataToSend);
       const res = await fetch(
         `/api/roomcategory/updateroomcategory/${editedCategory.id}`,
         {
