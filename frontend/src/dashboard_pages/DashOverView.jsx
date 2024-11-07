@@ -152,7 +152,12 @@ export default function DashOverView() {
     const endDate = new Date(date_out);
 
     const differenceInTime = endDate - startDate;
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    let differenceInDays = differenceInTime / (1000 * 3600 * 24);
+
+    // Ensure days are at least 1
+    if (differenceInDays <= 0) {
+      differenceInDays = 1;
+    }
 
     return differenceInDays.toFixed(0);
   };
