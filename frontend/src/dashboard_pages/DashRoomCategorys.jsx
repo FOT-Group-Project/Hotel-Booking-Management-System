@@ -52,6 +52,10 @@ export default function DashRoomCategorys() {
   const [alertMessage, setAlertMessage] = useState("");
   const [showDeleteConfirmetion, setShowDeleteConfirmetion] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
+  const [image, setImage] = useState(null);
+  const [currentImage, setCurrentImage] = useState({
+    image: null,
+  });
 
   const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [editedCategory, setEditedCategory] = useState(null);
@@ -200,6 +204,7 @@ export default function DashRoomCategorys() {
   };
 
   const handleEditSubmit = async (e) => {
+    console.log(currentImage);
     e.preventDefault();
     try {
       setUpdateLoding(true);
@@ -207,10 +212,13 @@ export default function DashRoomCategorys() {
       formDataToSend.append("category_name", editedCategory.category_name);
       formDataToSend.append("price", editedCategory.price);
       formDataToSend.append("description", editedCategory.description);
+      formDataToSend.append("image", currentImage);
+
       if (editedCategory.image) {
         formDataToSend.append("image", editedCategory.image);
       }
 
+      console.log(formDataToSend);
       const res = await fetch(
         `/api/roomcategory/updateroomcategory/${editedCategory.id}`,
         {
@@ -227,9 +235,11 @@ export default function DashRoomCategorys() {
         setImagePreview(null); // Clear image preview after editing
         setEditImagePreview(null); // Clear edit image preview on successful update
         setUpdateLoding(false);
+        setImage(null);
       } else {
         setUpdateLoding(false);
         setShowAlert(true);
+        setImage(null);
         setAlertMessage(data.message);
         setTimeout(() => {
           setShowAlert(false);
@@ -298,10 +308,12 @@ export default function DashRoomCategorys() {
           <Modal
             show={openModalEdit}
             onClose={() => setOpenModalEdit(false)}
-            popup
             size="md"
           >
-            <Modal.Header />
+            <Modal.Header>
+              <h1 className="text-xl font-semibold">Edit Room Category</h1>
+            </Modal.Header>
+
             <Modal.Body>
               <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
                 <div>
@@ -372,6 +384,9 @@ export default function DashRoomCategorys() {
                   />
                 </div>
                 <div className="flex gap-2 justify-end">
+                  <Button color="red" onClick={() => setOpenModalEdit(false)}>
+                    Close
+                  </Button>
                   <Button
                     className="bg-customBlue"
                     type="submit"
@@ -553,7 +568,7 @@ export default function DashRoomCategorys() {
                 </div>
               ) : (
                 <>
-                  {currentUser.role == "admin" && currentData.length > 0 ? (
+                  { currentData.length > 0 ? (
                     <>
                       <Table hoverable className="shadow-md w-full">
                         <TableHead>
@@ -598,7 +613,16 @@ export default function DashRoomCategorys() {
                                   <Button
                                     onClick={() => {
                                       setOpenModalEdit(true);
-                                      setEditedCategory(roomCategory); // Set the roomCategory to edit
+                                      setEditedCategory(roomCategory);
+                                      setImage(roomCategory.image);
+                                      setCurrentImage(
+                                        roomCategory.image instanceof File
+                                          ? roomCategory.image
+                                          : {
+                                              image: roomCategory.image,
+                                            }
+                                      );
+                                      console.log(currentImage);
                                     }}
                                     color="gray"
                                     className="w-full mb-2"
@@ -638,7 +662,11 @@ export default function DashRoomCategorys() {
                       </div>
                     </>
                   ) : (
-                    <p>You have no users yet!</p>
+                    <div className="flex justify-center items-center h-96">
+                      <p className="text-center text-gray-500 dark:text-gray-400">
+                        No Room Category Found
+                      </p>
+                    </div>
                   )}
                 </>
               )}

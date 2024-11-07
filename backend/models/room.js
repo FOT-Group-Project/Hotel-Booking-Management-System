@@ -15,13 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       room_name: DataTypes.STRING,
       category_id: DataTypes.INTEGER,
-      user_id: DataTypes.INTEGER,
-      availability: DataTypes.BOOLEAN,
-      status: {
-        type: DataTypes.ENUM,
-        values: ["available", "occupied", "maintenance"],
-        defaultValue: "available", // Default to available when a new room is created
-      },
+      status: DataTypes.ENUM("available", "occupied", "maintenance"),
     },
     {
       sequelize,

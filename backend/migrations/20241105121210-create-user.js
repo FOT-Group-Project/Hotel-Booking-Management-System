@@ -2,28 +2,38 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Rooms", {
+    await queryInterface.createTable("Users", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      room_name: {
+      username: {
         type: Sequelize.STRING,
       },
-      category_id: {
-        type: Sequelize.INTEGER,
+      firstname: {
+        type: Sequelize.STRING,
       },
-      user_id: {
-        type: Sequelize.INTEGER,
+      lastname: {
+        type: Sequelize.STRING,
       },
-      availability: {
-        type: Sequelize.BOOLEAN,
+      phone: {
+        type: Sequelize.STRING,
       },
-      status: {
-        type: Sequelize.ENUM("available", "occupied", "maintenance"),
-        defaultValue: "available",
+      email: {
+        type: Sequelize.STRING,
+      },
+      password: {
+        type: Sequelize.STRING,
+      },
+      role: {
+        type: Sequelize.ENUM,
+        values: ["admin", "receptionist", "manager"],
+        defaultValue: "receptionist",
+      },
+      profilepicurl: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -40,10 +50,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    // Drop the status ENUM type before dropping the table to avoid ENUM type conflicts
-    await queryInterface.sequelize.query(
-      'DROP TYPE IF EXISTS "enum_Rooms_status";'
-    );
-    await queryInterface.dropTable("Rooms");
+    await queryInterface.dropTable("Users");
   },
 };

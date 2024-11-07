@@ -366,8 +366,7 @@ export default function DashProfile() {
               </div>
 
               <Button
-                className="mt-3"
-                color="blue"
+                className="mt-3 bg-customBlue"
                 type="submit"
                 disabled={loading}
               >

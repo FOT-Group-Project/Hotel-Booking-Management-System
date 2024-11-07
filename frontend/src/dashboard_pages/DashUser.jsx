@@ -500,7 +500,8 @@ export default function DashUser() {
                           >
                             <option value="SelectRole">Select Role</option>
                             <option value="admin">Admin</option>
-                            <option value="customer">Customer</option>
+                            <option value="receptionist">Reception</option>
+                            <option value="manager">Manager</option>
                           </Select>
                         </div>
                       </div>
@@ -759,7 +760,7 @@ export default function DashUser() {
             </div>
           ) : (
             <>
-              {currentUser.role == "admin" && currentData.length > 0 ? (
+              { currentData.length > 0 ? (
                 <>
                   <Table hoverable className="shadow-md w-full">
                     <TableHead>

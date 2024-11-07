@@ -40,6 +40,7 @@ import { Link } from "react-router-dom";
 export default function DashBookingCancel() {
   const { currentUser } = useSelector((state) => state.user);
   const [bookedDetails, setBookedDetails] = useState([]);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
 
   const [formData, setFormData] = useState({
     room_name: "",
@@ -58,7 +59,7 @@ export default function DashBookingCancel() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 7;
   const totalPages = Math.ceil(bookedDetails.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
@@ -71,26 +72,46 @@ export default function DashBookingCancel() {
   const formatDate = (date) => {
     if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
     try {
+      // Parse the date as UTC to avoid timezone issues
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate()
+        )
+      );
+
       return new Intl.DateTimeFormat("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
-      }).format(new Date(date));
+      }).format(utcDate);
     } catch {
       return "Invalid Date";
     }
   };
 
   const formatTime = (date) => {
-    if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
+    if (!date) return "N/A"; // Return "N/A" if the date is invalid
     try {
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate(),
+          new Date(date).getUTCHours(),
+          new Date(date).getUTCMinutes()
+        )
+      );
+
       return new Intl.DateTimeFormat("en-US", {
         hour: "numeric",
         minute: "numeric",
-        hour12: true, // This will display time in AM/PM format
-      }).format(new Date(date));
+        hour12: true,
+        timeZone: "UTC", // Ensure the time is consistent with UTC
+      }).format(utcDate);
     } catch {
-      return "Invalid Date";
+      return "Invalid Time";
     }
   };
 
@@ -107,7 +128,7 @@ export default function DashBookingCancel() {
   const fetchBookedDetails = async () => {
     try {
       setFetchLoding(true);
-      const res = await fetch(`/api/booked/checked-out-details`);
+      const res = await fetch(`/api/booking/get-pending-details`);
       const data = await res.json();
       if (res.ok) {
         setBookedDetails(data.data);
@@ -129,17 +150,12 @@ export default function DashBookingCancel() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Canceling booking...");
+    console.log(selectedBookingId);
     try {
       setCreateLoding(true);
-      const res = await fetch(`/api/booked/cancel`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ref_no: bookedCheckOut.ref_no,
-          room_id: bookedCheckOut.room_id,
-        }),
+      const res = await fetch(`/api/booking/cancel/${selectedBookingId}`, {
+        method: "DELETE",
       });
       const data = await res.json();
       if (res.ok) {
@@ -154,6 +170,7 @@ export default function DashBookingCancel() {
         }, 10000);
       } else {
         setCreateLoding(false);
+        setOpenModal(false);
         setShowAlert(true);
         setAlertMessage(data.message);
         setTimeout(() => {
@@ -164,6 +181,7 @@ export default function DashBookingCancel() {
     } catch (error) {
       console.log(error.message);
       setCreateLoding(false);
+      setOpenModal(false);
     }
   };
 
@@ -204,17 +222,22 @@ export default function DashBookingCancel() {
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                   <div>
                     <Label value="Reference No : " />
-                    {bookedCheckOut.ref_no}
+                    {bookedCheckOut.reference_number}
                   </div>
 
                   <div>
                     <Label value="Name : " />
-                    {bookedCheckOut.name}
+                    {bookedCheckOut.customer_name}
+                  </div>
+
+                  <div>
+                    <Label value="Email : " />
+                    {bookedCheckOut.customer_email}
                   </div>
 
                   <div>
                     <Label value="Contact No : " />
-                    {bookedCheckOut.contact_no}
+                    {bookedCheckOut.customer_phone}
                   </div>
 
                   <div>
@@ -307,13 +330,13 @@ export default function DashBookingCancel() {
             </div>
           ) : (
             <>
-              {currentUser.role == "admin" && currentData.length > 0 ? (
+              { currentData.length > 0 ? (
                 <>
                   <Table hoverable className="shadow-md w-full">
                     <TableHead>
                       <TableHeadCell>Ref No</TableHeadCell>
                       <TableHeadCell>name</TableHeadCell>
-                      <TableHeadCell>contact no</TableHeadCell>
+                      <TableHeadCell>Email & Phone</TableHeadCell>
                       <TableHeadCell>room name</TableHeadCell>
                       <TableHeadCell>Check In Date</TableHeadCell>
                       <TableHeadCell>Check Out Date</TableHeadCell>
@@ -326,10 +349,20 @@ export default function DashBookingCancel() {
                     {currentData.map((bookedDetails) => (
                       <Table.Body className="divide-y" key={bookedDetails.id}>
                         <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <TableCell>{bookedDetails.ref_no}</TableCell>
-                          <TableCell>{bookedDetails.name}</TableCell>
-                          <TableCell>{bookedDetails.contact_no}</TableCell>
-                          <TableCell>{bookedDetails.room_name}</TableCell>
+                          <TableCell>
+                            {bookedDetails.reference_number}
+                          </TableCell>
+                          <TableCell>{bookedDetails.customer_name}</TableCell>
+                          <TableCell>
+                            {bookedDetails.customer_email}
+                            <br />
+                            {bookedDetails.customer_phone}
+                          </TableCell>
+                          <TableCell>
+                            {bookedDetails.room_name}
+                            <br />
+                            {bookedDetails.room_category_name}
+                          </TableCell>
                           <TableCell>
                             {formatDate(bookedDetails.date_in)}
                             {<br />}
@@ -375,6 +408,7 @@ export default function DashBookingCancel() {
                               layout="outline"
                               onClick={() => {
                                 setBookedCheckOut(bookedDetails);
+                                setSelectedBookingId(bookedDetails.booking_id);
                                 setOpenModal(true);
                               }}
                               className="bg-red-700"

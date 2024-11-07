@@ -29,6 +29,7 @@ function signUp(req, res) {
                     username: req.body.username,
                     email: req.body.email,
                     password: hash,
+                    role: "admin",
                   };
 
                   models.User.create(user)
@@ -143,7 +144,7 @@ async function google(req, res, next) {
             firstname: firstName,
             lastname: lastName,
             profilepicurl: photoURL,
-            role: "customer",
+            role: "admin",
           };
 
           models.User.create(user)
