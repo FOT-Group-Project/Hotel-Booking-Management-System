@@ -53,6 +53,9 @@ export default function DashRoomCategorys() {
   const [showDeleteConfirmetion, setShowDeleteConfirmetion] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [image, setImage] = useState(null);
+  const [currentImage, setCurrentImage] = useState({
+    image: null,
+  });
 
   const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [editedCategory, setEditedCategory] = useState(null);
@@ -201,6 +204,7 @@ export default function DashRoomCategorys() {
   };
 
   const handleEditSubmit = async (e) => {
+    console.log(currentImage);
     e.preventDefault();
     try {
       setUpdateLoding(true);
@@ -208,7 +212,8 @@ export default function DashRoomCategorys() {
       formDataToSend.append("category_name", editedCategory.category_name);
       formDataToSend.append("price", editedCategory.price);
       formDataToSend.append("description", editedCategory.description);
-      formDataToSend.append("image", image);
+      formDataToSend.append("image", currentImage);
+
       if (editedCategory.image) {
         formDataToSend.append("image", editedCategory.image);
       }
@@ -609,6 +614,14 @@ export default function DashRoomCategorys() {
                                       setOpenModalEdit(true);
                                       setEditedCategory(roomCategory);
                                       setImage(roomCategory.image);
+                                      setCurrentImage(
+                                        roomCategory.image instanceof File
+                                          ? roomCategory.image
+                                          : {
+                                              image: roomCategory.image,
+                                            }
+                                      );
+                                      console.log(currentImage);
                                     }}
                                     color="gray"
                                     className="w-full mb-2"
