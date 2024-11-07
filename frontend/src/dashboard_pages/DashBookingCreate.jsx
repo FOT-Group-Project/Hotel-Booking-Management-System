@@ -107,19 +107,49 @@ export default function DashBookingCreate() {
   };
 
   const formatDate = (date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(new Date(date));
+    if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
+    try {
+      // Parse the date as UTC to avoid timezone issues
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate()
+        )
+      );
+
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(utcDate);
+    } catch {
+      return "Invalid Date";
+    }
   };
 
   const formatTime = (date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    }).format(new Date(date));
+    if (!date) return "N/A"; // Return "N/A" if the date is invalid
+    try {
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate(),
+          new Date(date).getUTCHours(),
+          new Date(date).getUTCMinutes()
+        )
+      );
+
+      return new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+        timeZone: "UTC", // Ensure the time is consistent with UTC
+      }).format(utcDate);
+    } catch {
+      return "Invalid Time";
+    }
   };
 
   // Pagination
@@ -245,13 +275,17 @@ export default function DashBookingCreate() {
                     placeholder="Select a Room"
                   >
                     <option value="">Select a Room</option>
-                    {room.map((room) => (
-                      <option key={room.id} value={room.id}>
-                        {room.room_name} {" - "} {room.category_name}{" "}
-                        {" - Rs. "}
-                        {room.price} {" - "} {room.status.toUpperCase()}
-                      </option>
-                    ))}
+                    {room
+                      .filter(
+                        (room) => room.status.toLowerCase() === "available"
+                      )
+                      .map((room) => (
+                        <option key={room.id} value={room.id}>
+                          {room.room_name} {" - "} {room.category_name}{" "}
+                          {" - Rs. "}
+                          {room.price} {" - "} {room.status.toUpperCase()}
+                        </option>
+                      ))}
                   </Select>
                 </div>
 
@@ -314,7 +348,7 @@ export default function DashBookingCreate() {
                 </div>
               ) : (
                 <>
-                  {currentUser.role == "admin" && currentData.length > 0 ? (
+                  { currentData.length > 0 ? (
                     <>
                       <Table hoverable className="shadow-md w-full">
                         <TableHead>

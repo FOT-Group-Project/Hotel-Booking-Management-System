@@ -72,7 +72,7 @@ export default function DashCustomers() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 7;
   const totalPages = Math.ceil(customers.length / itemsPerPage);
 
   const onPageChange = (page) => setCurrentPage(page);
@@ -401,7 +401,7 @@ export default function DashCustomers() {
                 </div>
               ) : (
                 <>
-                  {currentUser.role == "admin" && currentData.length > 0 ? (
+                  { currentData.length > 0 ? (
                     <>
                       <Table hoverable className="shadow-md w-full">
                         <TableHead>

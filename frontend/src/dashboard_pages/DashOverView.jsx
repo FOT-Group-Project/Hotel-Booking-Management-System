@@ -102,19 +102,49 @@ export default function DashOverView() {
   // Pagination
 
   const formatDate = (date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(new Date(date));
+    if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
+    try {
+      // Parse the date as UTC to avoid timezone issues
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate()
+        )
+      );
+
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(utcDate);
+    } catch {
+      return "Invalid Date";
+    }
   };
 
   const formatTime = (date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    }).format(new Date(date));
+    if (!date) return "N/A"; // Return "N/A" if the date is invalid
+    try {
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate(),
+          new Date(date).getUTCHours(),
+          new Date(date).getUTCMinutes()
+        )
+      );
+
+      return new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+        timeZone: "UTC", // Ensure the time is consistent with UTC
+      }).format(utcDate);
+    } catch {
+      return "Invalid Time";
+    }
   };
 
   const calculateDaysBetween = (date_in, date_out) => {
@@ -122,7 +152,12 @@ export default function DashOverView() {
     const endDate = new Date(date_out);
 
     const differenceInTime = endDate - startDate;
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    let differenceInDays = differenceInTime / (1000 * 3600 * 24);
+
+    // Ensure days are at least 1
+    if (differenceInDays <= 0) {
+      differenceInDays = 1;
+    }
 
     return differenceInDays.toFixed(0);
   };
@@ -271,7 +306,7 @@ export default function DashOverView() {
             </div>
           ) : (
             <>
-              {currentUser.role == "admin" && currentData.length > 0 ? (
+              { currentData.length > 0 ? (
                 <>
                   <Table hoverable className="shadow-md w-full">
                     <TableHead>
@@ -318,7 +353,12 @@ export default function DashOverView() {
                             {calculateDaysBetween(
                               bookedDetails.date_in,
                               bookedDetails.date_out
-                            )}{" "}
+                            ) == 0
+                              ? 1
+                              : calculateDaysBetween(
+                                  bookedDetails.date_in,
+                                  bookedDetails.date_out
+                                )}{" "}
                             days
                           </TableCell>
                           <TableCell>

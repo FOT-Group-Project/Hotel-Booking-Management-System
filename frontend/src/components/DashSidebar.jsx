@@ -150,11 +150,13 @@ export default function DashSidebar() {
             </Sidebar.Item>
           </Link>
 
-          <Link to="/dashboard?tab=users">
-            <Sidebar.Item active={tab === "users"} icon={FaUsers} as="div">
-              Users
-            </Sidebar.Item>
-          </Link>
+          {currentUser?.role === "admin" && (
+            <Link to="/dashboard?tab=users">
+              <Sidebar.Item active={tab === "users"} icon={FaUsers} as="div">
+                Users
+              </Sidebar.Item>
+            </Link>
+          )}
 
           <Sidebar.Item
             icon={FaPowerOff}

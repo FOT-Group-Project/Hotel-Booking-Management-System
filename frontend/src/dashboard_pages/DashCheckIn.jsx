@@ -68,7 +68,7 @@ export default function DashCheckIn() {
   );
   // Pagination
 
-  const formatDate = (date) => {
+  const formatTodayDate = (date) => {
     if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
     try {
       return new Intl.DateTimeFormat("en-US", {
@@ -81,16 +81,49 @@ export default function DashCheckIn() {
     }
   };
 
-  const formatTime = (date) => {
+  const formatDate = (date) => {
     if (!date) return "N/A"; // Return "N/A" or another placeholder if the date is invalid
     try {
+      // Parse the date as UTC to avoid timezone issues
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate()
+        )
+      );
+
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(utcDate);
+    } catch {
+      return "Invalid Date";
+    }
+  };
+
+  const formatTime = (date) => {
+    if (!date) return "N/A"; // Return "N/A" if the date is invalid
+    try {
+      const utcDate = new Date(
+        Date.UTC(
+          new Date(date).getUTCFullYear(),
+          new Date(date).getUTCMonth(),
+          new Date(date).getUTCDate(),
+          new Date(date).getUTCHours(),
+          new Date(date).getUTCMinutes()
+        )
+      );
+
       return new Intl.DateTimeFormat("en-US", {
         hour: "numeric",
         minute: "numeric",
-        hour12: true, // This will display time in AM/PM format
-      }).format(new Date(date));
+        hour12: true,
+        timeZone: "UTC", // Ensure the time is consistent with UTC
+      }).format(utcDate);
     } catch {
-      return "Invalid Date";
+      return "Invalid Time";
     }
   };
 
@@ -311,7 +344,7 @@ export default function DashCheckIn() {
             </div>
           ) : (
             <>
-              {currentUser.role == "admin" && currentData.length > 0 ? (
+              { currentData.length > 0 ? (
                 <>
                   <Table hoverable className="shadow-md w-full">
                     <TableHead>
@@ -379,7 +412,7 @@ export default function DashCheckIn() {
                               </Badge>
                             ) : (
                               <Badge color="warning" size="lg">
-                                Pending
+                                Pending{" "}
                               </Badge>
                             )}
                           </TableCell>
@@ -387,6 +420,10 @@ export default function DashCheckIn() {
                             <Button
                               size="sm"
                               layout="outline"
+                              disabled={
+                                formatDate(bookedDetails.date_in) >
+                                formatTodayDate(new Date().toLocaleDateString())
+                              }
                               onClick={() => {
                                 setBookedCheckOut(bookedDetails);
                                 setSelectedBookingId(bookedDetails.booking_id);
