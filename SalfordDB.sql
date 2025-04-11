@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS SalfordDB;
-USE SalfordDB;
+CREATE DATABASE IF NOT EXISTS SalfordDBTest;
+USE SalfordDBTest;
 
 ALTER TABLE rooms
 ADD CONSTRAINT fk_rooms_category_id
