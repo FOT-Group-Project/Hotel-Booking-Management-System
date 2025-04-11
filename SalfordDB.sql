@@ -1,3 +1,4 @@
+# Run this before start the project 
 CREATE DATABASE IF NOT EXISTS SalfordDBTest;
 USE SalfordDBTest;
 
