@@ -1,14 +1,18 @@
-# Use Node.js
+# Use Node.js official image
 FROM node:20
 
+# Set working directory
 WORKDIR /app
 
+# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
-RUN npx sequelize-cli init
 
-
+# Copy the rest of the project
 COPY . .
 
+# Expose app port
 EXPOSE 3001
-CMD ["npm", "start"]
+
+# Run migrations and start the app
+CMD ["sh", "-c", "npx sequelize-cli db:migrate && npm start"]
