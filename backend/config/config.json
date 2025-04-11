@@ -10,14 +10,14 @@
     "username": "root",
     "password": "1234",
     "database": "SalfordDB",
-    "host": "127.0.0.1",
+    "host": "mysql",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
     "password": "1234",
     "database": "SalfordDB",
-    "host": "127.0.0.1",
+    "host": "mysql",
     "dialect": "mysql"
   }
 }
