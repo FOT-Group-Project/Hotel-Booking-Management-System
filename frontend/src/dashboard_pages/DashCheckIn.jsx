@@ -344,7 +344,7 @@ export default function DashCheckIn() {
             </div>
           ) : (
             <>
-              { currentData.length > 0 ? (
+              {currentData.length > 0 ? (
                 <>
                   <Table hoverable className="shadow-md w-full">
                     <TableHead>
@@ -421,7 +421,7 @@ export default function DashCheckIn() {
                               size="sm"
                               layout="outline"
                               disabled={
-                                formatDate(bookedDetails.date_in) >
+                                formatDate(bookedDetails.date_in) <
                                 formatTodayDate(new Date().toLocaleDateString())
                               }
                               onClick={() => {

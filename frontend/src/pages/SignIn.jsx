@@ -105,6 +105,21 @@ export default function SignIn() {
               Sign Up
             </Link>
           </div>
+          <Alert className="mt-5" color="failure">
+            <b>Note : </b>
+            Use{" "}
+            <code>
+              <b>admin</b>
+            </code>{" "}
+            as username and{" "}
+            <code>
+              <b>admin</b>
+            </code>{" "}
+            as password
+            <br />
+            <br />
+            Don't update or delete the inside the project data
+          </Alert>
           {errorMessage && (
             <Alert className="mt-5" color="failure">
               {errorMessage}
