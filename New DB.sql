@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS SalfordDB;
 USE SalfordDB;
-#run
+#run this file before start the project
 ALTER TABLE Rooms
 ADD CONSTRAINT fk_rooms_category_id
 FOREIGN KEY (category_id) REFERENCES RoomCategories(id);
